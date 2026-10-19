@@ -1,0 +1,25 @@
+---
+// « Notre ambition / Nous bâtissons » : reprise intégrale de la fiche projet officielle (page 1).
+import Section from '../layout/Section.astro';
+import { ambition as content } from '../../data/content';
+import { accent } from '../../lib/accents';
+---
+<Section id="neurodiversite" eyebrow={content.eyebrow} title={content.title}>
+  <ol class="std-card-list home-ambition reveal-grid">
+    {content.items.map((item, i) => (
+      <li style={`--accent:${accent(i).bar}`}>
+        <span class="std-card-num" style={`color:${accent(i).text}`} aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+        <p class="m-0 text-lg font-semibold">{item}</p>
+      </li>
+    ))}
+  </ol>
+</Section>
+
+<style>
+  /* 5 cartes : 2 en haut, 3 en bas (pas de case vide en fin de grille). */
+  @media (min-width: 64rem) {
+    .home-ambition { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .home-ambition > li { grid-column: span 2; }
+    .home-ambition > li:nth-child(-n + 2) { grid-column: span 3; }
+  }
+</style>

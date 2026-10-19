@@ -1,0 +1,74 @@
+---
+import Button from '../ui/Button.astro';
+import { hero } from '../../data/content';
+---
+<section id="accueil" class="hero home-hero">
+  {/* Bandeau avec logo dans le header (retour présidente du 05/10/2026). Fond : dégradé très
+      clair reprenant l'en-tête de la fiche projet (vert d'eau → bleu → lavande) ; le texte
+      reste en encre foncée, contraste ≥ 12:1 sur toute la largeur. */}
+  <div class="wrap grid gap-10 py-12 md:py-16 lg:grid-cols-[1.35fr_.65fr] lg:items-center">
+    <div>
+      <p class="home-hero-badge">{hero.topEyebrow}</p>
+      <h1 class="m-0 mt-5 max-w-3xl text-4xl font-bold leading-[1.05] md:text-6xl">{hero.title}</h1>
+      <svg class="hero-underline mt-4" width="220" height="14" viewBox="0 0 220 14" fill="none" aria-hidden="true" focusable="false">
+        <path pathLength="100" d="M4 8c20-6 40 6 60 0s40-6 60 0 40 6 60 0 30-6 32 0" stroke="url(#heroLineGrad)" stroke-width="4" stroke-linecap="round" />
+        <defs>
+          <linearGradient id="heroLineGrad" x1="0" x2="1">
+            <stop style="stop-color:#00B6FF" />
+            <stop offset=".5" style="stop-color:#7C3AED" />
+            <stop offset="1" style="stop-color:#FF005D" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <p class="home-hero-lead">« {hero.lead} »</p>
+      <div class="mt-8 flex flex-wrap gap-4">
+        <Button href={hero.ctaPrimary.href} variant="cta">{hero.ctaPrimary.label}</Button>
+        <Button href={hero.ctaSecondary.href} variant="secondary">{hero.ctaSecondary.label}</Button>
+      </div>
+    </div>
+    <div class="relative">
+      {/* Dessin d'Inès Ramdani (papillon et livre) : décoratif, ignoré des lecteurs d'écran. */}
+      <img src="/images/papillion.png" width="575" height="504" alt="" class="home-hero-art" loading="eager" decoding="async" />
+      <div class="home-hero-card">
+        <p class="m-0 text-lg leading-relaxed">{hero.intentionText}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .home-hero {
+    background: linear-gradient(115deg, #E6FAF1 0%, #E3F2FB 45%, #EEE8FD 100%);
+    border-bottom: 1px solid var(--color-blue-soft);
+  }
+  .home-hero-badge {
+    display: inline-block;
+    margin: 0;
+    padding: 0.35rem 0.9rem;
+    background: #fff;
+    border: 2px solid var(--color-blue-deep);
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--color-blue-deep);
+  }
+  .home-hero-lead {
+    max-width: 40rem;
+    margin: 1.5rem 0 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+    line-height: 1.5;
+  }
+  .home-hero-art { display: block; width: min(100%, 20rem); height: auto; margin: 0 auto -2.5rem; }
+  .home-hero-card {
+    position: relative;
+    padding: 1.5rem 1.6rem;
+    background: #fff;
+    border-radius: var(--radius-md, 8px);
+    border-top: 6px solid transparent;
+    border-image: linear-gradient(90deg, #00B6FF, #7C3AED, #FF005D, #FF8A3D, #8DC63F) 1;
+    box-shadow: 0 12px 28px -14px rgba(39, 115, 178, 0.45);
+  }
+  @media (max-width: 63.99rem) { .home-hero-art { width: 13rem; } }
+</style>

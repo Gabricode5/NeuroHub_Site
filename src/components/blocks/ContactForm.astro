@@ -1,0 +1,22 @@
+---
+// Formulaire de contact (prêt à relier à Formspree via site.formspreeUrl).
+import { site } from '../../data/site';
+import { soutenir as content } from '../../data/content';
+---
+<form
+  class="max-w-xl border border-blue-deep/15 bg-white p-6 text-ink"
+  action={site.formspreeUrl}
+  method="POST"
+>
+  <p class="mt-0 text-base">{content.formIntro}</p>
+  <label class="mb-4 block font-bold" for="name">Nom
+    <input id="name" name="name" required class="mt-1 block w-full rounded border border-blue-deep p-2" />
+  </label>
+  <label class="mb-4 block font-bold" for="organization">Organisation
+    <input id="organization" name="organization" class="mt-1 block w-full rounded border border-blue-deep p-2" />
+  </label>
+  <label class="mb-4 block font-bold" for="message">Message
+    <textarea id="message" name="message" required rows="4" class="mt-1 block w-full rounded border border-blue-deep p-2"></textarea>
+  </label>
+  <button class="button button-primary" type="submit">{content.formSubmitLabel}</button>
+</form>

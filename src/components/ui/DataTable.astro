@@ -1,0 +1,85 @@
+---
+export interface DataTableColumn {
+  key: string;
+  header: string;
+  /** Classes supplémentaires pour les cellules de cette colonne (ex. mettre en avant un
+      montant-clé en bleu, comme les chiffres 345K/75K/270K du flyer). */
+  cellClass?: string;
+}
+export type DataTableCellValue = string | { prefix?: string; count: number; suffix?: string };
+export interface DataTableRow {
+  cells: Record<string, DataTableCellValue>;
+  tone?: 'mist' | 'highlight';
+}
+interface Props {
+  caption: string;
+  captionHidden?: boolean;
+  columns: DataTableColumn[];
+  rows: DataTableRow[];
+  /** Bordure d'accent (bleu primaire) sur les lignes, au lieu du filet neutre par défaut. */
+  borderTone?: 'default' | 'accent';
+  firstColumnBold?: boolean;
+  /** Largeur minimale avant défilement horizontal (ex. "38.75rem"). Non défini = pas de contrainte. */
+  minWidth?: string;
+}
+const {
+  caption,
+  captionHidden = false,
+  columns,
+  rows,
+  borderTone = 'default',
+  firstColumnBold = false,
+  minWidth
+} = Astro.props;
+const captionId = `table-caption-${Math.random().toString(36).slice(2, 9)}`;
+---
+<div class="table-scroll" role="region" aria-labelledby={captionId} tabindex="0">
+  <table class="data-table w-full border-collapse text-left" style={minWidth ? `min-width:${minWidth}` : undefined}>
+    <caption id={captionId} class:list={[captionHidden ? 'sr-only' : 'mb-3 text-left font-bold']}>{caption}</caption>
+    <thead>
+      <tr class="bg-blue-deep text-white">
+        {columns.map((col) => <th scope="col" class="p-4">{col.header}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr class:list={['border-b', borderTone === 'accent' && 'border-blue/25', row.tone === 'mist' && 'bg-white text-ink', row.tone === 'highlight' && 'row-highlight']}>
+          {columns.map((col, i) => {
+            const cell = row.cells[col.key];
+            const Tag = i === 0 ? 'th' : 'td';
+            const cellProps = i === 0 ? { scope: 'row' } : {};
+            return (
+              <Tag {...cellProps} class:list={['p-4', i === 0 && firstColumnBold && 'font-semibold', col.cellClass]}>
+                {typeof cell === 'string' ? cell : <>{cell.prefix}<span data-count={cell.count}>{cell.count}</span>{cell.suffix}</>}
+              </Tag>
+            );
+          })}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  /* Défilement horizontal accessible : indice visuel (ombres de bord) qui ne montre
+     un côté que s'il reste du contenu à faire défiler dans cette direction, via le
+     classique double dégradé « local vs scroll » (pas de JS, respecte les préférences
+     de mouvement puisque c'est un état statique, pas une animation). */
+  .table-scroll {
+    overflow-x: auto;
+    background:
+      linear-gradient(to right, white 30%, rgba(255, 255, 255, 0)) left,
+      linear-gradient(to left, white 30%, rgba(255, 255, 255, 0)) right,
+      linear-gradient(to right, rgba(15, 23, 42, 0.16), rgba(15, 23, 42, 0)) left,
+      linear-gradient(to left, rgba(15, 23, 42, 0.16), rgba(15, 23, 42, 0)) right;
+    background-repeat: no-repeat;
+    background-color: white;
+    background-size: 32px 100%, 32px 100%, 12px 100%, 12px 100%;
+    background-attachment: local, local, scroll, scroll;
+  }
+
+  .table-scroll:focus-visible {
+    outline: 3px solid var(--color-blue-deep, #2773b2);
+    outline-offset: -3px;
+  }
+</style>

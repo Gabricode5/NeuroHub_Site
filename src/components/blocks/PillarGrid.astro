@@ -1,0 +1,40 @@
+---
+// Les 4 piliers pédagogiques (aussi utilisés sur la page d'accueil).
+import Card from '../ui/Card.astro';
+import { projet as content } from '../../data/content';
+
+// Couleurs vives demandées par la présidente (retours du 17/09 et 20/09/2026), une par
+// pilier. La couleur brute (#00B6FF, #FF005D, #00E5FF, #FF687A) ne sert QU'en éléments non
+// textuels — bordure pleine carte et fond très clair — car aucune des 4 n'atteint 4.5:1
+// avec du texte clair ou foncé (la plus proche, #FF005D, plafonne à 3.9:1 sur blanc et
+// 3.3:1 sur l'encre foncée). Le numéro "0X", lui, DOIT être coloré (demande explicite) :
+// il utilise une version assombrie de la même teinte (même famille de couleur, luminosité
+// réduite en HSL) choisie pour tenir ≥4.5:1 à la fois sur blanc et sur le fond teinté à 10%
+// — vérifié pour les 4 : 5.74/5.34, 5.73/5.01, 5.62/5.35, 5.36/4.95. Le titre reste en encre
+// foncée neutre (texte du corps, déjà conforme, cf. option "sinon garder le titre en foncé
+// neutre" de la demande) plutôt que sa propre version assombrie : bloc 02 et 04 sont tous
+// les deux dans la famille rouge une fois assombris, les distinguer resterait au numéro et
+// à la bordure plutôt que d'avoir deux titres rougeâtres proches l'un de l'autre.
+// `!border-*`/`!bg-*` : la classe .card (global.css) pose un raccourci `border`/`background`
+// qui écraserait sinon ces valeurs (même motif que Header.astro et le bandeau précédent).
+// Chaînes de classes ÉCRITES EN DUR (pas de template literal dynamique) : Tailwind scanne
+// le texte brut des fichiers pour générer le CSS des valeurs arbitraires — une classe
+// construite à l'exécution (`` `!border-[${x}]` ``) n'apparaît jamais littéralement dans le
+// fichier et ne serait donc jamais générée.
+const cardClasses = [
+  '!border-[3px] !border-[#00B6FF] !bg-[#00B6FF]/10',
+  '!border-[3px] !border-[#FF005D] !bg-[#FF005D]/10',
+  '!border-[3px] !border-[#00E5FF] !bg-[#00E5FF]/10',
+  '!border-[3px] !border-[#FF687A] !bg-[#FF687A]/10'
+];
+const numberColors = ['#006D99', '#CC004A', '#007380', '#D7001A'];
+---
+<div class="reveal-grid grid gap-8 md:grid-cols-2">
+  {content.pillars.map((pillar, i) => (
+    <Card padding="xl" class={cardClasses[i]}>
+      <p class="m-0 text-xl font-bold" style={`color:${numberColors[i]}`}>0{i + 1}</p>
+      <h3 class="mb-2 mt-2 text-2xl font-bold">{pillar.title}</h3>
+      <p class="mb-0">{pillar.text}</p>
+    </Card>
+  ))}
+</div>

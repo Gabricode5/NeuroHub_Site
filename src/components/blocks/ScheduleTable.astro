@@ -1,0 +1,36 @@
+---
+// « Notre semaine type » (page collège) : créneaux communs aux 4 jours sur une seule
+// cellule fusionnée, matières du jour sur 4 colonnes. Défilement horizontal sur mobile.
+import { semaineType as content } from '../../data/content';
+// Teinte de fond par jour (couleurs du logo très éclaircies, texte encre : contraste inchangé).
+const dayTints = ['#00B6FF', '#FF005D', '#7C3AED', '#8DC63F'];
+---
+<div class="schedule-scroll mt-6" role="region" aria-labelledby="schedule-caption" tabindex="0">
+  <table class="w-full min-w-[40rem] border-collapse text-left text-sm md:text-base">
+    <caption id="schedule-caption" class="sr-only">{content.caption}</caption>
+    <thead>
+      <tr class="bg-blue-deep text-white">
+        <th scope="col" class="p-3">Horaire</th>
+        {content.days.map((day) => <th scope="col" class="p-3">{day}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {content.slots.map((slot) => (
+        <tr class:list={['border-b border-blue/25', slot.all && 'bg-white']}>
+          <th scope="row" class="whitespace-nowrap p-3 font-semibold">{slot.time}</th>
+          {slot.all
+            ? <td colspan={content.days.length} class="schedule-common p-3 text-center">{slot.all}</td>
+            : slot.days?.map((subject, d) => <td class="schedule-course p-3 align-top" style={`--tint:${dayTints[d]}`}>{subject}</td>)}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .schedule-scroll { overflow-x: auto; border-radius: var(--radius-md, 8px); border: 1px solid var(--color-blue-soft); }
+  .schedule-course { background: color-mix(in srgb, var(--tint) 13%, white); border-left: 4px solid var(--tint); font-weight: 600; }
+  .schedule-common { background: #fff; }
+  tbody tr:nth-child(odd) .schedule-common { background: var(--color-blue-pale); }
+  .schedule-scroll:focus-visible { outline: 3px solid var(--color-blue-deep, #2773b2); outline-offset: -3px; }
+</style>

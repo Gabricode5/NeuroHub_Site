@@ -1,0 +1,33 @@
+---
+interface Props {
+  id: string;
+  /** Non affiché en tant que label visuel (voir passe "dé-IA-iser") ; conservé pour un usage
+      futur éventuel (ex. fil d'Ariane, aria-label). */
+  eyebrow?: string;
+  title: string;
+  /** 'light' (par défaut) = blanc, le fond de repos de la page. 'dark' = bleu foncé, réservé à
+      1-2 temps forts MAX par page (hero, CTA ou citation clé) — jamais une alternance mécanique,
+      et jamais un bloc trop peu rempli (titre + 2-3 lignes) : un aplat sombre sur du vide accentue
+      le vide au lieu de le combler. Voir StandardPage.astro. */
+  tone?: 'light' | 'dark' | 'tint';
+  /** Filet fin (#9BC1DC) en haut de section : à utiliser entre deux sections 'light' consécutives,
+      qui n'ont plus l'alternance de couleur pour se distinguer l'une de l'autre. Inutile après une
+      section 'dark' (la rupture de couleur suffit) ou en tout premier bloc (déjà séparé par le
+      bandeau de titre, voir PageHeader.astro). */
+  divider?: boolean;
+  /** Niveau du titre : `h2` par défaut (section d'une page), `h1` pour une page dédiée. */
+  titleTag?: 'h1' | 'h2';
+}
+const { id, title, tone = 'light', divider = false, titleTag = 'h2' } = Astro.props;
+// 'tint' = bleu très clair : bande de respiration entre deux sections blanches.
+const backgrounds = { light: '', dark: 'bg-blue-deep text-white', tint: 'bg-blue-pale' };
+const Heading = titleTag;
+---
+<section id={id} class:list={[backgrounds[tone], 'section-block', 'scroll-mt-20', divider && tone === 'light' && 'border-t border-blue-soft/50']}>
+  <div class="wrap w-full">
+    <header class="mb-12 max-w-3xl">
+      <Heading class="m-0 text-3xl font-bold leading-tight md:text-4xl">{title}</Heading>
+    </header>
+    <slot />
+  </div>
+</section>

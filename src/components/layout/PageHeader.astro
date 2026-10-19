@@ -1,0 +1,16 @@
+---
+// Bandeau de titre d'une page interne : H1 + intro (pas de label eyebrow, voir passe "dé-IA-iser").
+interface Props {
+  /** Non affiché visuellement ; conservé pour un usage futur éventuel. */
+  eyebrow: string;
+  title: string;
+  intro?: string;
+}
+const { title, intro } = Astro.props;
+---
+<section class="border-b border-blue-soft/60 py-14 md:py-20">
+  <div class="wrap">
+    <h1 class="m-0 max-w-4xl text-4xl font-bold leading-tight md:text-5xl">{title}</h1>
+    {intro && <p class="measure mt-5 text-lg leading-[1.7]">{intro}</p>}
+  </div>
+</section>

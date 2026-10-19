@@ -1,0 +1,43 @@
+---
+// Grille des membres / conseil d'administration. Photos à ajouter : voir README.
+import Card from '../ui/Card.astro';
+import { porteurs as content } from '../../data/content';
+
+// Accents individuels demandés par la présidente (retours du 17/09/2026) : violet pour
+// Frédéric Bonniot, rose pour Inès Ramdani. Les autres membres gardent le bandeau bleu
+// neutre existant (non précisé par la présidente, donc laissé inchangé). Nuances choisies
+// pour rester largement au-dessus du seuil AA (≥4.5:1) avec les initiales blanches, aux
+// deux extrémités du dégradé — vérifié : 5.7:1 et 10.95:1 (violet), 4.7:1 et 9.57:1 (rose).
+const accentByName: Record<string, string> = {
+  'Frédéric Bonniot': 'from-[#7C3AED] to-[#4C1D95]',
+  'Inès Ramdani': 'from-[#E11D48] to-[#881337]'
+};
+---
+{[
+  { title: 'Conseil d’administration', members: content.board },
+  { title: 'Membres bienfaiteurs', intro: content.benefactorsIntro, members: content.benefactors }
+].map((group) => (
+  <div class="mt-10">
+    <h3 class="m-0 text-2xl font-bold">{group.title}</h3>
+    {group.intro && <p class="measure leading-[1.7]">{group.intro}</p>}
+    <div class="reveal-grid mt-6 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {group.members.map((member) => (
+        <Card padding="none" class="overflow-hidden">
+          <div
+            class:list={['flex aspect-[4/2] items-center justify-center bg-gradient-to-br text-4xl font-bold text-white', accentByName[member.name] ?? 'from-blue to-blue-deep']}
+            role="img"
+            aria-label={`Emplacement photo de ${member.name}, à remplacer`}
+          >
+            {member.initials}
+          </div>
+          <div class="p-5">
+            <h4 class="m-0 text-xl font-bold">{member.name}</h4>
+            <p class="mb-0 mt-1 font-semibold text-ink">{member.role}</p>
+            {member.bio && <p class="mb-0 text-base leading-relaxed">{member.bio}</p>}
+          </div>
+        </Card>
+      ))}
+    </div>
+  </div>
+))}
+<p class="source mt-5">{content.note}</p>

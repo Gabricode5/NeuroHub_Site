@@ -1,0 +1,26 @@
+---
+// Tableau du budget prévisionnel + bloc organisation (repris de la page d'accueil).
+import DataTable, { type DataTableRow } from '../ui/DataTable.astro';
+import { modele as content } from '../../data/content';
+
+const columns = [
+  { key: 'label', header: 'Élément' },
+  // Montants-clés du budget (345K/75K/270K) : en bleu, comme les cercles du flyer.
+  // .amount-kpi (global.css) adapte la nuance de bleu au fond réel de la ligne (normale
+  // sur bloc sombre, ou blanche pour la ligne mise en avant).
+  { key: 'amount', header: 'Montant', cellClass: 'amount-kpi' }
+];
+const rows: DataTableRow[] = content.budgetRows.map((row) => ({
+  cells: { label: row.label, amount: { prefix: row.prefix, count: row.count, suffix: row.suffix } },
+  tone: row.highlight ? 'highlight' : undefined
+}));
+---
+<div class="grid gap-8 lg:grid-cols-[1.2fr_.8fr]">
+  <DataTable caption={content.budgetCaption} columns={columns} rows={rows} borderTone="accent" firstColumnBold />
+  <div class="border border-blue/40 p-6">
+    <h3 class="mt-0 text-xl font-bold">{content.orgBlock.title}</h3>
+    {content.orgBlock.paragraphs.map((paragraph, i, arr) => (
+      <p class:list={[i === arr.length - 1 && 'mb-0']}>{paragraph}</p>
+    ))}
+  </div>
+</div>

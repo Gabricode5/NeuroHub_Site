@@ -1,0 +1,20 @@
+---
+// Squelette commun à toutes les pages : en-tête (avec l'engrenage d'accessibilité),
+// contenu, pied de page. Les pages n'ont plus qu'à fournir un titre et leur contenu.
+import Base from './Base.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import { site } from '../data/site';
+
+interface Props {
+  /** Titre de l'onglet ; le nom du site est ajouté automatiquement. */
+  title?: string;
+}
+const { title } = Astro.props;
+const fullTitle = title ? `${title} · ${site.title}` : site.title;
+---
+<Base title={fullTitle}>
+  <Header />
+  <main id="contenu"><slot /></main>
+  <Footer />
+</Base>

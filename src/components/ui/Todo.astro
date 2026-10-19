@@ -1,0 +1,17 @@
+---
+// Encadré « contenu à rédiger » — visible sur le site tant qu'une section
+// n'a pas encore de texte. Repérable pour être complété plus tard dans content.ts.
+interface Props {
+  note?: string;
+}
+const { note = 'Contenu à rédiger.' } = Astro.props;
+---
+<!-- Fond opaque volontaire (blanc, pas bleu très clair) : à cette taille de texte (14px)
+     le bleu profond ne passe l'AA (4.5:1) que sur blanc, pas sur bleu très clair (~4.3:1).
+     Reste lisible qu'il soit posé sur une section claire ou sombre, voir global.css .section-block. -->
+<p
+  class="my-0 flex max-w-3xl items-start gap-3 rounded border border-dashed border-blue-deep/60 bg-white px-4 py-3 text-sm font-semibold leading-relaxed text-blue-deep"
+>
+  <span aria-hidden="true">✎</span>
+  <span><span class="sr-only">À compléter : </span>{note}</span>
+</p>

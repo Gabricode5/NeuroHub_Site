@@ -1,0 +1,27 @@
+---
+import '../styles/tokens.css';
+import '../styles/global.css';
+import ScrollFX from '../components/fx/ScrollFX.astro';
+import { site } from '../data/site';
+
+const { title = site.title } = Astro.props;
+---
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={site.description} />
+    <link rel="icon" href={site.logoIconSrc} type="image/png" />
+    <link rel="apple-touch-icon" href={site.logoIconSrc} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&display=swap" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#contenu">Aller au contenu principal</a>
+    <slot />
+    <ScrollFX />
+  </body>
+</html>

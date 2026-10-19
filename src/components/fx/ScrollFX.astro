@@ -1,0 +1,69 @@
+<script>
+  const header = document.getElementById('site-header');
+  if (header) {
+    const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // Le header contient maintenant une image pleine largeur (bandeau logo) dont la
+    // hauteur varie beaucoup avec la largeur d'écran (depuis ~150px en mobile jusqu'à
+    // ~400px en desktop) : plus possible de fixer --header-height en dur par breakpoint,
+    // on mesure la hauteur réelle du header et on la pousse dans la variable utilisée par
+    // scroll-padding-top (voir global.css), pour que les liens d'ancre du menu ne passent
+    // jamais sous le header sticky.
+    if ('ResizeObserver' in window) {
+      const setHeaderHeight = () => {
+        document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
+      };
+      setHeaderHeight();
+      new ResizeObserver(setHeaderHeight).observe(header);
+    }
+  }
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!reduced && 'IntersectionObserver' in window) {
+    const revealIo = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealIo.unobserve(entry.target);
+        }
+      }
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll<HTMLElement>('main > section, footer').forEach((el) => {
+      el.classList.add('reveal');
+      revealIo.observe(el);
+    });
+
+    document.querySelectorAll<HTMLElement>('.reveal-grid').forEach((grid) => {
+      [...grid.children].forEach((card, i) => {
+        const el = card as HTMLElement;
+        el.classList.add('reveal');
+        el.style.transitionDelay = `${i * 60}ms`;
+        revealIo.observe(el);
+      });
+    });
+
+    const countIo = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const el = entry.target as HTMLElement;
+        const target = Number(el.dataset.count);
+        const duration = 1200;
+        const start = performance.now();
+        el.textContent = '0';
+        const tick = (now: number) => {
+          const t = Math.min(1, (now - start) / duration);
+          const eased = 1 - Math.pow(1 - t, 3);
+          el.textContent = String(Math.round(target * eased));
+          if (t < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+        countIo.unobserve(el);
+      }
+    }, { threshold: 0.5 });
+    document.querySelectorAll<HTMLElement>('[data-count]').forEach((el) => countIo.observe(el));
+  }
+</script>

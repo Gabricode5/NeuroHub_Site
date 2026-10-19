@@ -1,0 +1,40 @@
+---
+import Section from '../layout/Section.astro';
+import { projet as content } from '../../data/content';
+import { accent } from '../../lib/accents';
+// Pictogrammes repris de la fiche projet (livre, engrenages, boussole, groupe) : décoratifs,
+// masqués aux lecteurs d'écran.
+const icons = ['📖', '🛠️', '🧭', '🤝'];
+---
+<Section id="projet" divider eyebrow={content.eyebrow} title={content.title}>
+  <ol class="home-pillars reveal-grid">
+    {content.pillars.map((pillar, i) => (
+      <li style={`--accent:${accent(i).bar}`}>
+        <div class="flex items-center justify-between">
+          <span class="home-pillar-icon" aria-hidden="true">{icons[i]}</span>
+          <span class="std-card-num m-0" style={`color:${accent(i).text}`} aria-hidden="true">0{i + 1}</span>
+        </div>
+        <h3 class="mb-2 mt-4 text-2xl font-bold">{pillar.title}</h3>
+        <p class="m-0">{pillar.text}</p>
+      </li>
+    ))}
+  </ol>
+</Section>
+
+<style>
+  .home-pillars { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.25rem; }
+  @media (min-width: 40rem) { .home-pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 72rem) { .home-pillars { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .home-pillars > li {
+    padding: 1.5rem;
+    background: color-mix(in srgb, var(--accent) 8%, white);
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, white);
+    border-top: 6px solid var(--accent);
+    border-radius: var(--radius-md, 8px);
+  }
+  .home-pillar-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 3rem; height: 3rem; border-radius: 999px;
+    background: #fff; border: 2px solid var(--accent); font-size: 1.4rem;
+  }
+</style>

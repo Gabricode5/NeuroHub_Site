@@ -1,0 +1,12 @@
+---
+// Tableau bénéfices / impacts / indicateurs pour le territoire.
+import DataTable, { type DataTableRow } from '../ui/DataTable.astro';
+import { impact as content } from '../../data/content';
+
+const columns = content.columns.map((header, i) => ({ key: ['benefit', 'impactText', 'indicator'][i], header }));
+const rows: DataTableRow[] = content.rows.map((row) => ({
+  cells: { benefit: row.benefit, impactText: row.impactText, indicator: row.indicator },
+  tone: row.highlight ? 'mist' : undefined
+}));
+---
+<DataTable caption={content.captionSr} captionHidden columns={columns} rows={rows} minWidth="38.75rem" />

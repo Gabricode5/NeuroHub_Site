@@ -1,0 +1,85 @@
+{/* Outils d'accessibilité : engrenage seul tout au bout à droite du bandeau d'en-tête,
+    qui ouvre un panneau d'options sous le bandeau. */}
+<div class="a11y-menu">
+  <button id="a11y-toggle" type="button" class="a11y-toggle" aria-expanded="false" aria-controls="a11y-options">
+    <svg aria-hidden="true" focusable="false" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+    <span class="sr-only">Accessibilité</span>
+  </button>
+  <div id="a11y-options" class="a11y-panel hidden space-y-2" role="group" aria-label="Options d'accessibilité">
+    <p class="m-0 mb-1 font-bold text-ink">Accessibilité</p>
+    <button type="button" data-a11y="high-contrast" aria-pressed="false" class="w-full rounded border border-blue-deep px-2 py-1 text-left text-sm">Contraste renforcé</button>
+    <div class="flex gap-2"><button type="button" data-font="-" class="flex-1 rounded border border-blue-deep py-1 text-sm" aria-label="Réduire la taille du texte">A−</button><button type="button" data-font="+" class="flex-1 rounded border border-blue-deep py-1 text-sm" aria-label="Augmenter la taille du texte">A+</button></div>
+    <button type="button" data-a11y="dyslexic" aria-pressed="false" class="w-full rounded border border-blue-deep px-2 py-1 text-left text-sm">Police adaptée dyslexie</button>
+    <button type="button" data-a11y="focus-mode" aria-pressed="false" class="w-full rounded border border-blue-deep px-2 py-1 text-left text-sm">Mode concentration</button>
+    <button type="button" data-a11y="motion-off" aria-pressed="false" class="w-full rounded border border-blue-deep px-2 py-1 text-left text-sm">Réduire les animations</button>
+  </div>
+</div>
+
+<style>
+  .a11y-menu { position: relative; flex-shrink: 0; }
+  /* Engrenage seul, sans cadre : encre foncée (≥5.7:1 sur tout le dégradé du bandeau),
+     zone cliquable de 44px conservée. */
+  .a11y-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-ink, #313232);
+    cursor: pointer;
+  }
+  .a11y-toggle svg { transition: transform .3s ease; }
+  .a11y-toggle:hover svg, .a11y-toggle[aria-expanded="true"] svg { transform: rotate(60deg); }
+  .a11y-panel {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    width: 14rem;
+    padding: 0.75rem;
+    background: #fff;
+    border: 2px solid var(--color-blue-deep, #2773b2);
+    border-radius: var(--radius-sm, 4px);
+    box-shadow: 0 8px 16px -8px rgba(15, 23, 42, 0.25);
+    z-index: 50;
+  }
+  .a11y-panel [aria-pressed="true"] { background: var(--color-blue-deep, #2773b2); color: #fff; }
+</style>
+<script>
+  const root = document.body; const key = 'cdn-a11y';
+  const trackedClasses = ['high-contrast', 'dyslexic', 'focus-mode', 'motion-off'];
+  const systemReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const savedRaw = localStorage.getItem(key);
+  const saved = savedRaw ? JSON.parse(savedRaw) : { classes: systemReducedMotion ? ['motion-off'] : [], scale: 0 };
+  for (const c of saved.classes) root.classList.add(c); document.documentElement.style.fontSize = `${100 + saved.scale * 10}%`;
+  document.querySelectorAll<HTMLButtonElement>('[data-a11y]').forEach(b => { if (saved.classes.includes(b.dataset.a11y)) b.setAttribute('aria-pressed', 'true'); });
+  const persist = () => localStorage.setItem(key, JSON.stringify({ classes: trackedClasses.filter(c => root.classList.contains(c)), scale: saved.scale }));
+  const a11yToggle = document.querySelector<HTMLButtonElement>('#a11y-toggle');
+  const a11yPanel = document.querySelector<HTMLElement>('#a11y-options');
+  const setA11yOpen = (open: boolean, focusToggle = false) => {
+    a11yToggle?.setAttribute('aria-expanded', String(open));
+    a11yPanel?.classList.toggle('hidden', !open);
+    if (focusToggle) a11yToggle?.focus();
+  };
+  a11yToggle?.addEventListener('click', () => setA11yOpen(a11yToggle.getAttribute('aria-expanded') !== 'true'));
+  // Échap ferme le panneau ; un clic en dehors aussi.
+  a11yPanel?.addEventListener('keydown', (e) => { if (e.key === 'Escape') setA11yOpen(false, true); });
+  a11yToggle?.addEventListener('keydown', (e) => { if (e.key === 'Escape') setA11yOpen(false); });
+  document.addEventListener('click', (e) => {
+    const t = e.target as Node;
+    if (a11yToggle?.getAttribute('aria-expanded') === 'true' && !a11yPanel?.contains(t) && !a11yToggle.contains(t)) setA11yOpen(false);
+  });
+  document.querySelectorAll<HTMLButtonElement>('[data-a11y]').forEach(b => b.addEventListener('click', () => {
+    const on = root.classList.toggle(b.dataset.a11y!);
+    b.setAttribute('aria-pressed', String(on));
+    persist();
+    if (b.dataset.a11y === 'motion-off') document.dispatchEvent(new CustomEvent('a11y:motion-off', { detail: { off: on } }));
+  }));
+  document.querySelectorAll<HTMLButtonElement>('[data-font]').forEach(b => b.addEventListener('click', () => { saved.scale = Math.max(-1, Math.min(2, saved.scale + (b.dataset.font === '+' ? 1 : -1))); document.documentElement.style.fontSize = `${100 + saved.scale * 10}%`; persist(); }));
+</script>

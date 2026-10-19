@@ -1,0 +1,61 @@
+/* Design system : source unique des couleurs, rayons et polices.
+   Toute valeur reprise ailleurs (Tailwind config, composants) doit pointer ici. */
+:root {
+  /* Couleurs de marque — identité officielle échantillonnée sur le flyer (source de vérité
+     visuelle). Palette bleu + vert lime ; l'ancienne palette sarcelle/navy/or est retirée.
+     Composantes séparées par des ESPACES (syntaxe CSS Color 4 moderne), jamais par des
+     virgules : ces variables sont réutilisées à la fois sans alpha (rgb(var(--x-rgb)))
+     et avec alpha via un "/" (rgb(var(--x-rgb) / .5)). Mélanger virgules (ancienne syntaxe)
+     et "/" (nouvelle syntaxe) dans un même rgb() est invalide et le navigateur ignore
+     silencieusement toute la couleur -> fond/texte/ombre transparents sans erreur visible.
+     (Bug trouvé le 11/09 : en-tête de tableau invisible, ombre des cartes absente.) */
+  /* Bleu primaire (#439ECB) : accent qui signe — aplats, bordures, icônes, et texte
+     UNIQUEMENT s'il est gros/gras (≥19px gras ou ≥24px). Sur blanc il ne fait que 3:1,
+     insuffisant pour du texte normal : ne jamais l'utiliser en texte de taille courante. */
+  --color-blue-rgb: 67 158 203;
+  --color-blue: rgb(var(--color-blue-rgb));
+  /* Bleu profond (#2773B2) : fond des sections sombres (ex-navy), et variante de texte/accent
+     sûre en contraste AA partout où le bleu primaire est trop clair (liens, libellés, KPI
+     sur fond clair, bordures de champs). */
+  --color-blue-deep-rgb: 39 115 178;
+  --color-blue-deep: rgb(var(--color-blue-deep-rgb));
+  /* Bleu très clair (#E0F1F8) : fond des sections claires alternées et des cartes/encadrés ;
+     sert aussi de texte/accent sûr sur fond sombre (bleu profond) où le bleu primaire manque
+     de contraste. */
+  --color-blue-pale-rgb: 224 241 248;
+  --color-blue-pale: rgb(var(--color-blue-pale-rgb));
+  /* Bleu doux (#9BC1DC) : séparateurs, filets, états discrets. Jamais en texte (contraste
+     insuffisant même en gros). */
+  --color-blue-soft-rgb: 155 193 220;
+  --color-blue-soft: rgb(var(--color-blue-soft-rgb));
+  /* Vert lime (#D5FA31) : accent secondaire STRICTEMENT réservé à la zone engagement/soutien
+     (page Soutenir, blocs mécénat/CTA), en aplat de fond ou bordure de bouton — jamais en
+     texte sur fond clair (contraste insuffisant). Voir Soutenir.astro / soutenir.astro. */
+  --color-lime-rgb: 213 250 49;
+  --color-lime: rgb(var(--color-lime-rgb));
+  /* Gris texte (#313232) : couleur du corps de texte sur fond clair. */
+  --color-ink-rgb: 49 50 50;
+  --color-ink: rgb(var(--color-ink-rgb));
+  /* Texte des citations/sources : gris texte, pas bleu profond — ce dernier ne fait que
+     ~4.3:1 sur le bleu très clair des sections claires (insuffisant en texte de cette taille). */
+  --color-source-text: var(--color-ink);
+
+  /* Rayons : registre "dur", éditorial, pas de gros arrondis SaaS.
+     Cartes à angle vif (0) ; seuls les petits éléments interactifs (boutons, champs) gardent 4px. */
+  --radius-sm: 4px;
+  --radius-md: 0;
+
+  /* Pas d'ombres décoratives : le relief vient du contraste de fond ou d'un filet 1px. */
+
+  /* Typographie : serif éditorial pour les titres (voix propre, pas générique),
+     sans-serif ultra-lisible pour le corps. */
+  --font-sans: "Atkinson Hyperlegible", Arial, sans-serif;
+  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-dyslexic: Verdana, Arial, sans-serif;
+
+  /* Layout */
+  --container-max-width: 1200px;
+  /* Hauteur approximative de l'en-tête sticky, utilisée par scroll-padding-top (voir
+     global.css) pour que les liens d'ancre ne tombent jamais sous l'en-tête. */
+  --header-height: 76px;
+}

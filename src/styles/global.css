@@ -1,0 +1,162 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { box-sizing: border-box; }
+html {
+  scroll-behavior: smooth;
+  /* Pas de scroll-snap (retiré : créait des arrêts imprécis sur des sections de hauteurs
+     très inégales, avec un liseré navy résiduel en haut du viewport). scroll-padding-top
+     reste nécessaire pour que les liens d'ancre du menu ne passent pas sous l'en-tête sticky. */
+  scroll-padding-top: var(--header-height);
+}
+@media (max-width: 700px) {
+  /* En-tête mobile compact (logo + bouton burger sur une ligne, menu en panneau
+     déroulant fermé par défaut — voir Header.astro) : proche de la hauteur desktop,
+     plus la valeur géante d'avant qui supposait un menu empilé toujours visible. */
+  :root { --header-height: 64px; }
+}
+body { margin: 0; color: var(--color-ink); background: #fff; font-family: var(--font-sans); font-size: 1.125rem; line-height: 1.7; }
+a { color: inherit; }
+/* Double liseré (foncé + halo blanc) : un seul ton ne reste jamais visible sur TOUTES les
+   couleurs de fond du site (blanc, bleu très clair, bleu profond, lime) — la combinaison si. */
+:focus-visible { outline: 3px solid var(--color-ink); outline-offset: 2px; box-shadow: 0 0 0 5px #fff; }
+.skip-link { position:absolute; z-index:100; top:0; left:1rem; transform:translateY(-150%); background:var(--color-blue-deep); color:#fff; padding:.5rem 1rem; }
+.skip-link:focus { transform:translateY(0); }
+.sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
+.prose p { max-width: 68ch; }
+.source { font-size:.875rem; line-height:1.45; color:var(--color-source-text); }
+
+/* Largeur de lecture confortable pour le corps de texte (jamais pleine largeur) */
+.measure { max-width: 68ch; }
+
+/* Largeur de contenu unique, padding latéral fluide */
+.wrap { width:100%; max-width:var(--container-max-width); margin-inline:auto; padding-inline: clamp(1.25rem, 4vw, 2rem); }
+
+/* Titres en serif éditorial (voix distincte du sans-serif générique) ; le corps de texte
+   reste en --font-sans, réglé plus haut sur body. */
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-serif); }
+
+/* font-size 1.2rem (~19px, gras) : fait franchir aux boutons le seuil "texte large" AA
+   (≥19px gras), nécessaire pour .button-primary ci-dessous (voir commentaire). */
+.button { display:inline-flex; align-items:center; justify-content:center; gap:.45rem; min-height:48px; padding:.6rem 1.1rem; border:2px solid transparent; border-radius:var(--radius-sm); font-size:1.2rem; font-weight:700; text-decoration:none; cursor:pointer; transition:transform .15s ease, background .15s ease; }
+.button:hover { transform:scale(1.02); }
+/* Fond bleu primaire + texte foncé (pas blanc) : #439ECB ne porte que ~3:1 avec du blanc,
+   insuffisant en texte normal. Avec de l'encre foncée ça passe (~4.3:1, suffisant en texte
+   large/gras — d'où le font-size ci-dessus). Le bleu primaire reste aussi visuellement
+   distinct du bleu profond (fond des sections sombres) ET du bleu très clair (sections
+   claires) : le bouton ne se fond jamais dans son arrière-plan. */
+.button-primary { color:var(--color-ink); background:var(--color-blue); }.button-primary:hover { background:color-mix(in srgb, var(--color-blue) 82%, black); }.button-secondary { color:var(--color-blue-deep); border-color:var(--color-blue-deep); background:#fff; }.button-secondary:hover { background:var(--color-blue-pale); }
+/* Vert lime : STRICTEMENT réservé aux boutons "Soutenir / Nous soutenir" (l'engagement),
+   jamais ailleurs. Texte foncé dessus : le lime est trop clair pour porter du blanc lisible. */
+.button-cta { color:var(--color-ink); background:var(--color-lime); }.button-cta:hover { background:color-mix(in srgb, var(--color-lime) 85%, black); }
+
+/* Système de cartes unique : angle vif (pas d'arrondi SaaS), pas d'ombre décorative -
+   le relief vient du filet 1px et du changement de couleur de bordure au survol. */
+/* .card a TOUJOURS un fond opaque explicite, quelle que soit la section qui l'entoure (y
+   compris tone="dark" qui met color:#fff sur la section) : sans ce color explicite, tout
+   texte de carte sans classe de couleur propre héritait du blanc ambiant -> texte blanc sur
+   carte claire, invisible. Root cause du bug "cartes vides" (Besoin, Rétroplanning). */
+.card { border:1px solid var(--color-blue-soft); border-radius:var(--radius-md); background:var(--color-blue-pale); color:var(--color-ink); transition: border-color .2s ease; }
+.card:hover { border-color:var(--color-blue); }
+
+/* Ligne mise en avant dans un tableau (bloc sombre ou clair) : fond blanc qui tranche sur les
+   deux fonds de section (bleu profond ou bleu très clair), jamais de fond clair avec texte clair */
+.row-highlight { background:#fff; color:var(--color-ink); }
+
+/* Montant-clé de tableau (ex. 345K/75K/270K du budget) : bleu comme sur le flyer. La ligne
+   "normale" est transparente et laisse voir le fond de la section — qui peut être claire ou
+   sombre selon la page (voir StandardPage.astro, alternance ancrée sur le dernier bloc) : la
+   teinte du montant suit donc le fond réel via le sélecteur ancêtre .bg-blue-deep, plutôt que de
+   supposer un fond sombre par défaut (bug vu le 12/09 : montants invisibles, bleu très clair sur
+   fond clair, après un changement d'alternance qui a fait atterrir un tableau sur une section
+   claire). Sur une ligne mise en avant (fond blanc, voir .row-highlight ci-dessus) ou "mist"
+   (fond blanc, voir DataTable), le bleu profond reste lisible sur blanc quel que soit le fond
+   de la section — ces deux règles doivent rester après .bg-blue-deep .amount-kpi ci-dessous
+   pour gagner en cas d'égalité de spécificité. */
+.amount-kpi { font-size:1.25rem; font-weight:700; color:var(--color-blue-deep); }
+.bg-blue-deep .amount-kpi { color:var(--color-blue-pale); }
+.row-highlight .amount-kpi, .bg-white .amount-kpi { color:var(--color-blue-deep); }
+
+/* Sections « à la hauteur de leur contenu » : pas de hauteur forcée (min-height:100dvh +
+   centrage vertical produisait de grands vides blancs sur le contenu court, citation,
+   stats...). Le padding généreux et homogène + l'alternance de fond font l'effet « blocs ». */
+.section-block {
+  padding-block: clamp(96px, 14vh, 160px);
+}
+
+/* Citations/sources (texte discret) sur fond bleu profond : la teinte fixe .source (encre
+   foncée) est prévue pour un fond clair et devient illisible dessus. Le bleu profond n'étant
+   pas assez sombre pour supporter du blanc semi-transparent en texte normal (~14px), on
+   repasse en blanc plein plutôt qu'un blanc atténué. */
+.bg-blue-deep .source { color: #fff; }
+
+/* En-tête sticky : filet plus marqué après un léger défilement (pas d'ombre) */
+#site-header { transition: border-color .2s ease; }
+#site-header.is-scrolled { border-bottom-color: var(--color-blue); }
+
+/* Rangée de chiffres-clés sans boîtes : filet vertical entre colonnes (registre éditorial) */
+.stat-row { display:grid; gap:2rem; }
+@media (min-width:640px) {
+  .stat-row > *:not(:first-child) { border-left:1px solid var(--color-blue-soft); padding-left:2rem; }
+}
+.bg-blue-deep .stat-row > *:not(:first-child) { border-left-color: rgb(255 255 255 / 0.2); }
+
+/* Apparition douce au scroll (activée par le script uniquement si le mouvement est autorisé) */
+.reveal { opacity:0; transform:translateY(16px); transition: opacity .5s ease-out, transform .5s ease-out; }
+.reveal.is-visible { opacity:1; transform:none; }
+
+/* Soulignement du hero (dégradé bleu de marque, plus arc-en-ciel : celui-ci reste réservé au
+   logo) : tracé au chargement, jamais si le mouvement est réduit */
+.hero-underline path { stroke-dasharray:100; stroke-dashoffset:0; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-underline path { stroke-dashoffset:100; animation: draw-in 800ms ease-out .3s forwards; }
+}
+@keyframes draw-in { to { stroke-dashoffset:0; } }
+
+body.high-contrast { color:#000; background:#fff; } body.high-contrast .bg-blue-deep, body.high-contrast .hero { background:#000 !important; } body.high-contrast .text-white { color:#fff !important; } body.high-contrast .button-primary { background:#000; color:#fff; border-color:#fff; } body.high-contrast .card { border:2px solid #000; box-shadow:none; background:#fff; }
+body.dyslexic { font-family: var(--font-dyslexic); letter-spacing:.035em; word-spacing:.08em; } body.focus-mode main > section:not(:hover):not(:focus-within) { opacity:.35; } body.focus-mode main > section:focus-within, body.focus-mode main > section:hover { opacity:1; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; animation:none!important; }
+}
+
+/* Rythme et repères communs à toutes les sections (accueil + pages internes) :
+   espacement vertical resserré et petit filet arc-en-ciel (couleurs du logo) au-dessus
+   de chaque titre de section h2. */
+.section-block { padding-block: clamp(56px, 8vh, 104px); }
+.section-block > .wrap > header { margin-bottom: 2rem; }
+/* Petit filet arc-en-ciel (couleurs du logo) au-dessus de chaque titre de section. */
+.section-block > .wrap > header > h2::before {
+  content: '';
+  display: block;
+  width: 4.5rem;
+  height: 6px;
+  margin-bottom: 1rem;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #00B6FF, #7C3AED, #FF005D, #FF8A3D, #8DC63F);
+}
+
+
+/* Grille de cartes numérotées à filet coloré (--accent posé en style inline). */
+.std-list-intro { margin: 2.5rem 0 1.25rem; font-size: 1.2rem; font-weight: 700; }
+.std-card-list {
+  list-style: none;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1.25rem;
+}
+@media (min-width: 40rem) { .std-card-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 64rem) { .std-card-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.std-card-list > li {
+  padding: 1.25rem 1.35rem 1.4rem;
+  background: #fff;
+  border: 1px solid var(--color-blue-soft);
+  border-top: 5px solid var(--accent);
+  border-radius: var(--radius-md, 8px);
+  line-height: 1.6;
+}
+.std-card-num { display: block; font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; line-height: 1; margin-bottom: 0.6rem; }
+.std-card-term { margin: 0 0 0.4rem; font-family: var(--font-serif); font-size: 1.2rem; font-weight: 700; }
+

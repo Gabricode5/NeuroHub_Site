@@ -1,0 +1,251 @@
+---
+// Gabarit des pages internes : bandeau de titre + une section par bloc défini
+// dans data/content.ts. Un bloc affiche, selon ce qu'il contient : du texte,
+// des liens, un module riche (`custom`), ou un encadré « à compléter ».
+import PageHeader from './PageHeader.astro';
+import Section from './Section.astro';
+import Todo from '../ui/Todo.astro';
+import TeamGrid from './TeamGrid.astro';
+import PillarGrid from '../blocks/PillarGrid.astro';
+import BudgetTable from '../blocks/BudgetTable.astro';
+import ImpactTable from '../blocks/ImpactTable.astro';
+import MapEmbed from '../blocks/MapEmbed.astro';
+import ContactForm from '../blocks/ContactForm.astro';
+import ScheduleTable from '../blocks/ScheduleTable.astro';
+import { rich } from '../../lib/rich';
+import { accent } from '../../lib/accents';
+import type { SitePage } from '../../data/content';
+
+interface Props {
+  page: SitePage;
+  /** Photo de couverture optionnelle, affichée juste sous le bandeau de titre : une photo
+      cadrée dans la largeur de lecture, pas un bandeau plein cadre. */
+  coverImage?: { src: string; alt: string };
+}
+const { page, coverImage } = Astro.props;
+
+// « **Terme** : explication » → titre de carte + texte ; sinon la phrase entière.
+const splitTerm = (item: string) => {
+  const m = item.match(/^\*\*(.+?)\*\*\s*:\s*(.+)$/);
+  return m ? { term: m[1], text: m[2] } : { term: undefined, text: item };
+};
+---
+<div class="std-page">
+<PageHeader eyebrow={page.eyebrow} title={page.title} intro={page.intro} />
+{coverImage && (
+  <div class="wrap pb-4 pt-10 md:pt-14">
+    <img
+      src={coverImage.src}
+      alt={coverImage.alt}
+      class="aspect-[3/2] w-full max-w-3xl border border-blue-soft object-cover md:aspect-[16/9]"
+      loading="eager"
+      decoding="async"
+    />
+  </div>
+)}
+{page.blocks.map((block, i) => (
+  <Section id={block.id} title={block.title} divider={i > 0}>
+    {block.quote && (
+      <figure class="std-quote">
+        <span class="std-quote-mark" aria-hidden="true">«</span>
+        <blockquote class="m-0">{block.quote.text}</blockquote>
+        <figcaption>— {block.quote.author}</figcaption>
+      </figure>
+    )}
+
+    {(block.figure || block.body) && (
+      <div class:list={[block.figure && 'std-with-figure', block.variant === 'callout' && 'std-callout']}>
+        {block.figure && (
+          <img
+            src={block.figure.src}
+            srcset={block.figure.srcSmall ? `${block.figure.srcSmall} 800w, ${block.figure.src} ${block.figure.width}w` : undefined}
+            sizes="(min-width: 64rem) 28rem, 100vw"
+            width={block.figure.width}
+            height={block.figure.height}
+            alt={block.figure.alt}
+            class="h-auto w-full"
+            loading="eager"
+            decoding="async"
+          />
+        )}
+        {block.body && (
+          <div class="std-text measure">
+            {block.body.map((paragraph, j) => (
+              <p class:list={[j === 0 && !block.figure && block.variant !== 'callout' && 'std-lead']} set:html={rich(paragraph)} />
+            ))}
+          </div>
+        )}
+      </div>
+    )}
+
+    {block.listIntro && <p class="std-list-intro" set:html={rich(block.listIntro)} />}
+    {block.list && (block.listStyle === 'cards' ? (
+      <ol class="std-card-list">
+        {block.list.map((item, j) => {
+          const { term, text } = splitTerm(item);
+          return (
+            <li style={`--accent:${accent(j).bar}`}>
+              <span class="std-card-num" style={`color:${accent(j).text}`} aria-hidden="true">{String(j + 1).padStart(2, '0')}</span>
+              {term && <p class="std-card-term">{term}</p>}
+              <p class="m-0" set:html={rich(text)} />
+            </li>
+          );
+        })}
+      </ol>
+    ) : (
+      <ul class="measure mt-4 list-disc space-y-3 pl-6 leading-[1.7]">
+        {block.list.map((item) => <li set:html={rich(item)} />)}
+      </ul>
+    ))}
+
+    {block.custom === 'team' && <TeamGrid />}
+    {block.custom === 'pillars' && <PillarGrid />}
+    {block.custom === 'budget' && <BudgetTable />}
+    {block.custom === 'impact' && <ImpactTable />}
+    {block.custom === 'map' && <MapEmbed />}
+    {block.custom === 'contact' && <ContactForm />}
+
+    {block.subsections && (
+      <div class:list={[block.subsectionsLayout === 'cards' ? 'std-sub-grid' : 'std-sub-stack']}>
+        {block.subsections.map((sub, j) => (
+          <div
+            class:list={[
+              block.subsectionsLayout === 'cards' && 'std-sub-card',
+              sub.wide && 'std-sub-wide',
+              sub.variant === 'note' && 'std-note'
+            ]}
+            style={`--accent:${accent(j).bar}`}
+          >
+            <h3 class="std-sub-title">
+              {sub.icon && <span class="std-sub-icon" aria-hidden="true">{sub.icon}</span>}
+              <span>{sub.title}</span>
+            </h3>
+            {sub.body && (
+              <div class="std-text">
+                {sub.body.map((paragraph) => <p set:html={rich(paragraph)} />)}
+              </div>
+            )}
+            {sub.list && (sub.listStyle === 'cards' ? (
+              <ol class="std-card-list">
+                {sub.list.map((item, k) => (
+                  <li style={`--accent:${accent(k).bar}`}>
+                    <span class="std-card-num" style={`color:${accent(k).text}`} aria-hidden="true">{String(k + 1).padStart(2, '0')}</span>
+                    <p class="m-0" set:html={rich(item)} />
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <ul class="measure mt-4 list-disc space-y-3 pl-6 leading-[1.7]">
+                {sub.list.map((item) => <li set:html={rich(item)} />)}
+              </ul>
+            ))}
+            {sub.custom === 'schedule' && <ScheduleTable />}
+          </div>
+        ))}
+      </div>
+    )}
+
+    {block.sources && <p class="source mt-4">{block.sources}</p>}
+
+    {block.todo && !block.custom && <div class="mt-5"><Todo note={block.todo} /></div>}
+    {!block.body && !block.custom && !block.todo && !block.subsections && <Todo />}
+
+    {block.links && block.links.length > 0 && (
+      <ul class="mt-6 flex list-none flex-wrap gap-x-6 gap-y-2 p-0 font-semibold">
+        {block.links.map((link) => (
+          <li><a href={link.href}>{link.label} <span aria-hidden="true">→</span></a></li>
+        ))}
+      </ul>
+    )}
+  </Section>
+))}
+</div>
+
+<style is:global>
+  /* Styles éditoriaux des pages internes (association, collège, soutenir) : le texte reste
+     celui de data/content.ts, seule la mise en forme vit ici. */
+  .std-text p { margin: 0 0 1.1rem; line-height: 1.75; }
+  .std-text p:last-child { margin-bottom: 0; }
+  .std-text strong { color: var(--color-blue-deep); }
+  .std-lead { font-size: 1.3rem; line-height: 1.6 !important; }
+
+  .std-quote {
+    position: relative;
+    max-width: 52rem;
+    margin: 0 0 2.5rem;
+    padding: 2rem 2rem 1.75rem 4.25rem;
+    background: var(--color-blue-pale);
+    border-radius: var(--radius-md, 8px);
+    border-left: 6px solid #7C3AED;
+  }
+  .std-quote-mark {
+    position: absolute;
+    left: 1.1rem;
+    top: 0.6rem;
+    font-family: var(--font-serif);
+    font-size: 4.5rem;
+    line-height: 1;
+    color: #6D28D9;
+  }
+  .std-quote blockquote { font-family: var(--font-serif); font-style: italic; font-size: 1.35rem; line-height: 1.55; }
+  .std-quote figcaption { margin-top: 1rem; font-weight: 700; color: var(--color-blue-deep); }
+
+  .std-with-figure { display: grid; gap: 2rem; align-items: start; }
+  @media (min-width: 64rem) { .std-with-figure { grid-template-columns: minmax(0, 28rem) minmax(0, 1fr); gap: 3rem; } }
+
+  .std-callout {
+    max-width: 52rem;
+    padding: 1.75rem 2rem;
+    border: 1px solid var(--color-blue-soft);
+    border-left: 6px solid #00B6FF;
+    border-radius: var(--radius-md, 8px);
+    background: #fff;
+  }
+
+  .std-sub-stack > * + * { margin-top: 2.5rem; }
+  .std-sub-stack { margin-top: 2.5rem; }
+  .std-sub-grid { display: grid; gap: 1.5rem; margin-top: 0.5rem; }
+  @media (min-width: 52rem) {
+    .std-sub-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .std-sub-wide { grid-column: 1 / -1; }
+  }
+  .std-sub-card {
+    padding: 1.6rem 1.75rem 1.75rem;
+    background: #fff;
+    border: 1px solid var(--color-blue-soft);
+    border-top: 5px solid var(--accent);
+    border-radius: var(--radius-md, 8px);
+  }
+  .std-sub-card:first-child { background: var(--color-blue-pale); }
+  .std-sub-title { display: flex; align-items: center; gap: 0.75rem; margin: 0 0 1rem; font-size: 1.5rem; font-weight: 700; line-height: 1.25; }
+  .std-sub-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent, #00B6FF) 16%, white);
+    font-size: 1.3rem;
+  }
+  .std-sub-stack .std-card-list { margin-top: 0.5rem; }
+
+  .std-note {
+    padding: 1.6rem 1.75rem;
+    background: var(--color-blue-pale);
+    border-left: 6px solid var(--color-blue-deep);
+    border-radius: var(--radius-md, 8px);
+    max-width: 52rem;
+  }
+
+  @media (max-width: 40rem) {
+    .std-quote { padding: 1.5rem 1.25rem 1.25rem 3.25rem; }
+    .std-quote-mark { left: 0.7rem; font-size: 3.5rem; }
+    .std-quote blockquote { font-size: 1.15rem; }
+    .std-lead { font-size: 1.15rem; }
+    .std-sub-card, .std-callout, .std-note { padding: 1.25rem; }
+  }
+
+  body.high-contrast .std-quote, body.high-contrast .std-note, body.high-contrast .std-sub-card { background: #fff; border-color: #000; }
+</style>

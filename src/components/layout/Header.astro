@@ -6,7 +6,7 @@ import { site } from '../../data/site';
 const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
 const isCurrent = (href: string) => (href.replace(/\/+$/, '') || '/') === currentPath;
 ---
-<header id="site-header" class="site-header-banner sticky top-0 z-40 border-b border-blue-soft/60 py-4">
+<header id="site-header" class="site-header-banner sticky top-0 z-40 border-b border-blue-soft/60 py-6">
   {/* Fond dégradé pleine largeur (retour présidente du 06/10/2026) : le bandeau avec logo
       intégré ne reste lisible qu'en grand (vu précédemment, 391px = trop gros) ou illisible
       en petit (48px = texte imprononçable) — pas de taille qui marche pour les deux à la
@@ -34,7 +34,7 @@ const isCurrent = (href: string) => (href.replace(/\/+$/, '') || '/') === curren
           </li>
         ))}
         <li>
-          <Button href={site.navCta.href} variant="cta" class="!min-h-0 !px-3 !py-1.5 text-sm">{site.navCta.label}</Button>
+          <Button href={site.navCta.href} variant="cta" class="!min-h-0 !px-4 !py-2 text-base">{site.navCta.label}</Button>
         </li>
       </ul>
     </nav>
@@ -67,7 +67,7 @@ const isCurrent = (href: string) => (href.replace(/\/+$/, '') || '/') === curren
     background-size: cover;
     background-position: center;
   }
-  .header-logo-img { display: block; height: 56px; width: auto; }
+  .header-logo-img { display: block; height: 84px; width: auto; }
   .site-nav { margin-left: auto; }
   .header-actions { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
   .header-a11y {
@@ -80,6 +80,9 @@ const isCurrent = (href: string) => (href.replace(/\/+$/, '') || '/') === curren
      la place de l'engrenage pour qu'il ne chevauche jamais la nav ni le burger. */
   @media (max-width: 1320px) {
     .site-bar { padding-right: calc(clamp(0.5rem, 1.5vw, 1.25rem) + 3rem); }
+  }
+  @media (max-width: 380px) {
+    .header-logo-img { height: 38px !important; }
   }
 
   .nav-list {
@@ -97,7 +100,7 @@ const isCurrent = (href: string) => (href.replace(/\/+$/, '') || '/') === curren
     display: inline-block;
     padding: 0.25rem 0;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     color: var(--color-ink, #313232);
     text-decoration: none;
     white-space: nowrap;
@@ -147,7 +150,9 @@ const isCurrent = (href: string) => (href.replace(/\/+$/, '') || '/') === curren
      aussi du parcours clavier — pas besoin de dupliquer avec [hidden]). */
   @media (max-width: 700px) {
     #site-header { padding-block: 0.65rem; }
+    /* Logo le plus grand possible sans chevaucher le burger + l'engrenage (390px testé). */
     .header-logo-img { height: 44px; }
+    .site-bar { gap: 0.75rem; }
     .nav-toggle { display: inline-flex; }
     .site-nav {
       display: none;

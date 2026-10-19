@@ -1,24 +1,23 @@
 ---
 import Section from '../layout/Section.astro';
 import { projet as content } from '../../data/content';
-import { accent } from '../../lib/accents';
+import { accents } from '../../lib/accents';
 // Pictogrammes repris de la fiche projet (livre, engrenages, boussole, groupe) : décoratifs,
 // masqués aux lecteurs d'écran.
 const icons = ['📖', '🛠️', '🧭', '🤝'];
+// Bleu, orange, violet, turquoise (le rose vif de la 2e carte remplacé par l'orange).
+const cardAccents = [accents[0], accents[4], accents[2], accents[3]];
 ---
 <Section id="projet" divider eyebrow={content.eyebrow} title={content.title}>
-  <ol class="home-pillars reveal-grid">
+  <ul class="home-pillars reveal-grid">
     {content.pillars.map((pillar, i) => (
-      <li style={`--accent:${accent(i).bar}`}>
-        <div class="flex items-center justify-between">
-          <span class="home-pillar-icon" aria-hidden="true">{icons[i]}</span>
-          <span class="std-card-num m-0" style={`color:${accent(i).text}`} aria-hidden="true">0{i + 1}</span>
-        </div>
+      <li style={`--accent:${cardAccents[i].bar}`}>
+        <span class="home-pillar-icon" aria-hidden="true">{icons[i]}</span>
         <h3 class="mb-2 mt-4 text-2xl font-bold">{pillar.title}</h3>
         <p class="m-0">{pillar.text}</p>
       </li>
     ))}
-  </ol>
+  </ul>
 </Section>
 
 <style>

@@ -30,8 +30,8 @@ const splitTerm = (item: string) => {
   return m ? { term: m[1], text: m[2] } : { term: undefined, text: item };
 };
 ---
-<div class="std-page">
-<PageHeader eyebrow={page.eyebrow} title={page.title} intro={page.intro} />
+<div class:list={['std-page', page.wideText && 'std-wide']}>
+<PageHeader eyebrow={page.eyebrow} title={page.title} intro={page.intro} hidden={page.hideTitle} />
 {coverImage && (
   <div class="wrap pb-4 pt-10 md:pt-14">
     <img
@@ -48,18 +48,18 @@ const splitTerm = (item: string) => {
     {block.quote && (
       <figure class="std-quote">
         <span class="std-quote-mark" aria-hidden="true">«</span>
-        <blockquote class="m-0">{block.quote.text}</blockquote>
+        <blockquote class="m-0">{block.quote.text}<span class="std-quote-close" aria-hidden="true">»</span></blockquote>
         <figcaption>— {block.quote.author}</figcaption>
       </figure>
     )}
 
     {(block.figure || block.body) && (
-      <div class:list={[block.figure && 'std-with-figure', block.variant === 'callout' && 'std-callout']}>
+      <div class:list={[block.figure && (page.wideText ? 'std-figure-full' : 'std-with-figure'), block.variant === 'callout' && 'std-callout']}>
         {block.figure && (
           <img
             src={block.figure.src}
             srcset={block.figure.srcSmall ? `${block.figure.srcSmall} 800w, ${block.figure.src} ${block.figure.width}w` : undefined}
-            sizes="(min-width: 64rem) 28rem, 100vw"
+            sizes={page.wideText ? 'min(100vw, 85vh)' : '(min-width: 64rem) 28rem, 100vw'}
             width={block.figure.width}
             height={block.figure.height}
             alt={block.figure.alt}
@@ -69,9 +69,9 @@ const splitTerm = (item: string) => {
           />
         )}
         {block.body && (
-          <div class="std-text measure">
+          <div class:list={['std-text measure', block.quote && 'std-justify']}>
             {block.body.map((paragraph, j) => (
-              <p class:list={[j === 0 && !block.figure && block.variant !== 'callout' && 'std-lead']} set:html={rich(paragraph)} />
+              <p class:list={[j === 0 && !block.figure && block.variant !== 'callout' && !page.wideText && 'std-lead']} set:html={rich(paragraph)} />
             ))}
           </div>
         )}
@@ -85,9 +85,8 @@ const splitTerm = (item: string) => {
           const { term, text } = splitTerm(item);
           return (
             <li style={`--accent:${accent(j).bar}`}>
-              <span class="std-card-num" style={`color:${accent(j).text}`} aria-hidden="true">{String(j + 1).padStart(2, '0')}</span>
-              {term && <p class="std-card-term">{term}</p>}
-              <p class="m-0" set:html={rich(text)} />
+              {term && <p class="std-card-term" style={`color:${accent(j).text}`}>{term}</p>}
+              <p class="m-0" style={`--accent-text:${accent(j).text}`} set:html={rich(text)} />
             </li>
           );
         })}
@@ -107,41 +106,75 @@ const splitTerm = (item: string) => {
 
     {block.subsections && (
       <div class:list={[block.subsectionsLayout === 'cards' ? 'std-sub-grid' : 'std-sub-stack']}>
-        {block.subsections.map((sub, j) => (
-          <div
-            class:list={[
-              block.subsectionsLayout === 'cards' && 'std-sub-card',
-              sub.wide && 'std-sub-wide',
-              sub.variant === 'note' && 'std-note'
-            ]}
-            style={`--accent:${accent(j).bar}`}
-          >
-            <h3 class="std-sub-title">
-              {sub.icon && <span class="std-sub-icon" aria-hidden="true">{sub.icon}</span>}
-              <span>{sub.title}</span>
-            </h3>
-            {sub.body && (
-              <div class="std-text">
-                {sub.body.map((paragraph) => <p set:html={rich(paragraph)} />)}
-              </div>
-            )}
-            {sub.list && (sub.listStyle === 'cards' ? (
-              <ol class="std-card-list">
-                {sub.list.map((item, k) => (
-                  <li style={`--accent:${accent(k).bar}`}>
-                    <span class="std-card-num" style={`color:${accent(k).text}`} aria-hidden="true">{String(k + 1).padStart(2, '0')}</span>
-                    <p class="m-0" set:html={rich(item)} />
-                  </li>
+        {block.subsections.map((sub, j) => {
+          const cls = [
+            block.subsectionsLayout === 'cards' && 'std-sub-card',
+            sub.wide && 'std-sub-wide',
+            sub.variant === 'note' && 'std-note'
+          ];
+          const style = `--accent:${accent(j).bar}`;
+          // Encadrés repliables (page collège) : titre + « + », le texte se déplie au clic.
+          // Le tableau de la semaine type reste toujours ouvert.
+          const collapsible = page.wideText && block.subsectionsLayout === 'cards' && sub.custom !== 'schedule';
+          return collapsible ? (
+            <details class:list={[...cls, 'std-sub-details']} style={style}>
+              <summary>
+                <h3 class="std-sub-title">
+                  {sub.icon && <span class="std-sub-icon" aria-hidden="true">{sub.icon}</span>}
+                  <span>{sub.title}</span>
+                </h3>
+                <span class="std-sub-plus" aria-hidden="true"></span>
+              </summary>
+              <div class="std-sub-body">
+                {sub.body && (
+                  <div class="std-text">
+                    {sub.body.map((paragraph) => <p set:html={rich(paragraph)} />)}
+                  </div>
+                )}
+                {sub.list && (sub.listStyle === 'cards' ? (
+                  <ol class="std-card-list">
+                    {sub.list.map((item, k) => (
+                      <li style={`--accent:${accent(k).bar}`}>
+                        <p class="m-0" style={`--accent-text:${accent(k).text}`} set:html={rich(item)} />
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                  <ul class="measure mt-4 list-disc space-y-3 pl-6 leading-[1.7]">
+                    {sub.list.map((item) => <li set:html={rich(item)} />)}
+                  </ul>
                 ))}
-              </ol>
-            ) : (
-              <ul class="measure mt-4 list-disc space-y-3 pl-6 leading-[1.7]">
-                {sub.list.map((item) => <li set:html={rich(item)} />)}
-              </ul>
-            ))}
-            {sub.custom === 'schedule' && <ScheduleTable />}
-          </div>
-        ))}
+                {sub.custom === 'schedule' && <ScheduleTable />}
+              </div>
+            </details>
+          ) : (
+            <div class:list={cls} style={style}>
+              <h3 class="std-sub-title">
+                {sub.icon && <span class="std-sub-icon" aria-hidden="true">{sub.icon}</span>}
+                <span>{sub.title}</span>
+              </h3>
+              {sub.body && (
+                <div class="std-text">
+                  {sub.body.map((paragraph) => <p set:html={rich(paragraph)} />)}
+                </div>
+              )}
+              {sub.list && (sub.listStyle === 'cards' ? (
+                <ol class="std-card-list">
+                  {sub.list.map((item, k) => (
+                    <li style={`--accent:${accent(k).bar}`}>
+                      <p class="m-0" style={`--accent-text:${accent(k).text}`} set:html={rich(item)} />
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <ul class="measure mt-4 list-disc space-y-3 pl-6 leading-[1.7]">
+                  {sub.list.map((item) => <li set:html={rich(item)} />)}
+                </ul>
+              ))}
+              {sub.custom === 'schedule' && <ScheduleTable />}
+            </div>
+          );
+        })}
       </div>
     )}
 
@@ -183,11 +216,38 @@ const splitTerm = (item: string) => {
     left: 1.1rem;
     top: 0.6rem;
     font-family: var(--font-serif);
-    font-size: 4.5rem;
+    font-size: 3.2rem;
     line-height: 1;
     color: #6D28D9;
   }
   .std-quote blockquote { font-family: var(--font-serif); font-style: italic; font-size: 1.35rem; line-height: 1.55; }
+  /* Guillemet fermant, même dessin que l'ouvrant, en fin de citation. */
+  .std-quote-close { display: inline-block; margin-left: 0.2em; font-family: var(--font-serif); font-size: 3.2rem; line-height: 0; vertical-align: -0.38em; font-style: normal; color: #6D28D9; }
+  /* Texte justifié sous les citations (page association) ; coupure des mots en français
+     pour éviter les grands blancs entre les mots. */
+  .std-justify p { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+  /* Début en gras des cartes : couleur (assombrie) de la bande de la carte. */
+  .std-card-list strong { color: var(--accent-text, inherit); }
+
+  /* Image pleine page (collège) : affichée en entier, centrée, jamais plus haute que l'écran. */
+  .std-figure-full img { display: block; width: min(100%, 85vh); height: auto; margin: 0 auto 2.5rem; }
+
+  /* Encadrés repliables : titre + bouton « + » qui tourne en « × » une fois ouvert. */
+  .std-sub-details > summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; cursor: pointer; list-style: none; }
+  .std-sub-details > summary::-webkit-details-marker { display: none; }
+  .std-sub-details > summary .std-sub-title { margin: 0; }
+  .std-sub-details[open] > summary { margin-bottom: 1rem; }
+  .std-sub-plus { position: relative; flex-shrink: 0; width: 2.5rem; height: 2.5rem; border-radius: 999px; border: 2px solid var(--color-blue-deep); background: #fff; transition: transform .2s ease; }
+  .std-sub-plus::before, .std-sub-plus::after { content: ''; position: absolute; left: 50%; top: 50%; width: 14px; height: 2.5px; background: var(--color-blue-deep); transform: translate(-50%, -50%); border-radius: 2px; }
+  .std-sub-plus::after { transform: translate(-50%, -50%) rotate(90deg); }
+  .std-sub-details[open] .std-sub-plus { transform: rotate(45deg); }
+  .std-sub-details > summary:hover .std-sub-plus { background: var(--color-blue-pale); }
+  .std-sub-details.std-sub-card { padding-block: 1.25rem; }
+
+  /* Page en « textes pleine largeur » (association) : citation, paragraphes, encadrés et
+     intro des groupes alignés sur la largeur des cartes, tous justifiés. */
+  .std-wide .measure, .std-wide .std-quote, .std-wide .std-callout, .std-wide .std-note { max-width: none; }
+  .std-wide .std-text p, .std-wide .measure, .std-wide .std-quote blockquote, .std-wide .std-card-list p { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
   .std-quote figcaption { margin-top: 1rem; font-weight: 700; color: var(--color-blue-deep); }
 
   .std-with-figure { display: grid; gap: 2rem; align-items: start; }
@@ -204,7 +264,7 @@ const splitTerm = (item: string) => {
 
   .std-sub-stack > * + * { margin-top: 2.5rem; }
   .std-sub-stack { margin-top: 2.5rem; }
-  .std-sub-grid { display: grid; gap: 1.5rem; margin-top: 0.5rem; }
+  .std-sub-grid { display: grid; gap: 1.5rem; margin-top: 0.5rem; align-items: start; }
   @media (min-width: 52rem) {
     .std-sub-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .std-sub-wide { grid-column: 1 / -1; }
@@ -236,12 +296,12 @@ const splitTerm = (item: string) => {
     background: var(--color-blue-pale);
     border-left: 6px solid var(--color-blue-deep);
     border-radius: var(--radius-md, 8px);
-    max-width: 52rem;
   }
 
   @media (max-width: 40rem) {
     .std-quote { padding: 1.5rem 1.25rem 1.25rem 3.25rem; }
-    .std-quote-mark { left: 0.7rem; font-size: 3.5rem; }
+    .std-quote-mark { left: 0.7rem; font-size: 2.6rem; }
+    .std-quote-close { font-size: 2.6rem; }
     .std-quote blockquote { font-size: 1.15rem; }
     .std-lead { font-size: 1.15rem; }
     .std-sub-card, .std-callout, .std-note { padding: 1.25rem; }

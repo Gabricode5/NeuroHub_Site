@@ -16,12 +16,13 @@ export interface PillarItem {
 // Page d'accueil entièrement alignée sur la fiche projet officielle de l'association
 // (PDF « Collège de la Neurodiversité », 2 pages). Rien ici qui ne vienne de ce document.
 export const hero = {
-  topEyebrow: '10–18 ans · TND : TSA, TDAH, DYS, etc.',
   title: 'Collège de la Neurodiversité',
   lead: 'Permettre à chaque jeune d’accéder aux apprentissages, de développer ses propres talents, et de trouver sa place en société.',
-  ctaPrimary: { href: '/soutenir', label: 'Soutenir le projet' },
-  ctaSecondary: { href: '#projet', label: 'Découvrir le projet' },
-  intentionText: 'Projet d’établissement éducatif et inclusif pour adolescents adapté aux profils neuro-atypiques. Ouverture pour septembre 2027.'
+  // Pré-inscription : mène au formulaire de contact de la page Nous soutenir (en attendant
+  // un formulaire dédié).
+  cta: { href: '/soutenir#contact', label: 'Se pré-inscrire' },
+  scrollCue: { href: '#neurodiversite', label: 'Découvrir l’école' },
+  intentionText: 'Projet d’établissement éducatif et inclusif pour adolescents adapté aux profils neuro-atypiques (TND : TSA, TDAH, DYS, etc.). Ouverture pour septembre 2027.'
 };
 
 // « Notre ambition / Nous bâtissons » : reprise intégrale de la fiche projet (page 1).
@@ -38,14 +39,14 @@ export const ambition = {
 };
 
 export const besoin = {
-  eyebrow: 'Pour les jeunes de 10 à 18 ans',
-  title: 'Pour les jeunes de 10 à 18 ans',
+  eyebrow: 'Adapté à tous les jeunes de 10 à 18 ans, y compris aux profils neuro-atypiques',
+  title: 'Adapté à tous les jeunes de 10 à 18 ans, y compris aux profils neuro-atypiques',
   paragraphs: [
-    'Dans un contexte de déscolarisation qui s’intensifie au collège, liée aux difficultés, au manque d’aménagements et aux enjeux identitaires exposant la santé mentale, l’Association du Collège de la Neurodiversité souhaite :'
+    'Dans un contexte de déscolarisation qui s’intensifie au collège, liée aux difficultés, au manque d’aménagements et aux enjeux identitaires exposant la santé mentale, l’Association du Collège de la Neurodiversité apporte une solution alternative :'
   ],
   bullets: [
-    'Donner accès et du sens aux apprentissages,',
-    'Donner les clés pour se connaître, se comprendre soi et les autres,',
+    'Donner accès et du sens aux apprentissages.',
+    'Donner les clés pour se connaître, se comprendre soi et les autres.',
     'Permettre de construire son projet, se valoriser et participer à la vie en société.'
   ]
 };
@@ -67,22 +68,17 @@ export const porteurs = {
   // Source : brief « Contenu site Internet », page association, partie 3.
   board: [
     { name: 'Pascaline Ravera', role: 'Présidente',
-      bio: '40 ans, mère d’un garçon de 10 ans au profil autistique. Responsable projets synergie dans la distribution. Souhaite prévenir la santé mentale des jeunes aux profils neuro-atypiques.',
       initials: 'PR' },
     { name: 'Frédéric Bonniot', role: 'Co-président',
-      bio: '50 ans, profil autistique et parcours atypique. Data scientist autodidacte, jury en ingénierie d’IA et coach auprès d’adultes TSA. Souhaite offrir aux jeunes une scolarité digne et sécurisante.',
       initials: 'FB' },
     { name: 'Maëlys Garcia', role: 'Trésorière',
-      bio: '29 ans, profil autistique au parcours atypique. Psychologie, sciences pédagogiques, logistique, gestion de projet et recherche de financements ; missions humanitaires et associatives pour l’éducation, l’égalité des chances et l’aide aux jeunes en situation de pauvreté.',
       initials: 'MG' },
     { name: 'Louis Glandières', role: 'Membre du conseil d’administration',
-      bio: '26 ans, profil autistique et scientifique. Développeur Python et créateur de jeux numériques, passionné de science ; a étudié à l’École Supérieure Pour les Talents Atypiques (ESPTA, Cergy).',
       initials: 'LG' }
   ] satisfies TeamMember[],
   benefactorsIntro: 'Notre association a la chance de pouvoir aussi compter sur ses membres bienfaiteurs pour concrétiser les projets :',
   benefactors: [
     { name: 'Inès Ramdani', role: 'Soutien et participation à la co-construction du projet du collège, créatrice du logo de l’association',
-      bio: '30 ans, profil autistique et artistique. Talent prononcé pour le dessin, elle réalise et expose de nombreuses œuvres destinées au grand public. Créatrice du logo de l’association.',
       initials: 'IR' },
     { name: 'Lionel Monbrison', role: 'Soutien et participation à la co-construction du projet du collège, référent pédagogique', initials: 'LM' },
     { name: 'Gaby', role: 'Créateur du site Internet', initials: 'G' }
@@ -147,6 +143,10 @@ export interface SitePage {
   title: string;
   eyebrow: string;
   intro?: string;
+  /** Textes pleine largeur, justifiés, sans paragraphe d'intro agrandi. */
+  wideText?: boolean;
+  /** Titre de page masqué visuellement (conservé pour les lecteurs d'écran). */
+  hideTitle?: boolean;
   blocks: PageBlock[];
 }
 
@@ -155,6 +155,10 @@ export const associationPage: SitePage = {
   route: '/association',
   title: 'L’association',
   eyebrow: 'Notre structure',
+  // Titre masqué à l'écran (gardé pour les lecteurs d'écran) ; tous les textes sur toute la
+  // largeur du contenu, justifiés, même taille (retours du 19/10/2026).
+  hideTitle: true,
+  wideText: true,
   // Source : brief « Contenu site Internet », page association (parties 1 à 3 + rapports d’activité).
   blocks: [
     {
@@ -227,6 +231,10 @@ export const collegePage: SitePage = {
   route: '/college',
   title: 'Le collège',
   eyebrow: 'Le projet éducatif',
+  // Titre masqué à l'écran (gardé pour les lecteurs d'écran), image pleine page, textes
+  // pleine largeur justifiés, encadrés « Comment ? » repliables (retour du 19/10/2026).
+  hideTitle: true,
+  wideText: true,
   // Source : brief « Contenu site Internet », page collège.
   blocks: [
     {
@@ -456,7 +464,7 @@ export const impact = {
 // Nouvelle section homepage (source : fiche projet officielle, page 2).
 export const pourquoiSoutenir = {
   eyebrow: 'Pour soutenir le projet',
-  title: 'Pourquoi soutenir le projet ?',
+  title: 'Pourquoi soutenir l’école ?',
   reasons: [
     'Prévenir les ruptures de parcours et le décrochage scolaire.',
     'Réduire l’isolement et favoriser la socialisation.',

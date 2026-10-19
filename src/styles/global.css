@@ -120,6 +120,8 @@ body.dyslexic { font-family: var(--font-dyslexic); letter-spacing:.035em; word-s
 @media (prefers-reduced-motion: reduce) {
   *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; animation:none!important; }
 }
+/* Bouton « Réduire les animations » du panneau d'accessibilité : même effet que la préférence système. */
+body.motion-off *, body.motion-off *::before, body.motion-off *::after { transition:none!important; animation:none!important; }
 
 /* Rythme et repères communs à toutes les sections (accueil + pages internes) :
    espacement vertical resserré et petit filet arc-en-ciel (couleurs du logo) au-dessus

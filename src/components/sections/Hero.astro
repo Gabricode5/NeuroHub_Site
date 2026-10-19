@@ -8,8 +8,7 @@ import { hero } from '../../data/content';
       reste en encre foncée, contraste ≥ 12:1 sur toute la largeur. */}
   <div class="wrap grid gap-10 py-12 md:py-16 lg:grid-cols-[1.35fr_.65fr] lg:items-center">
     <div>
-      <p class="home-hero-badge">{hero.topEyebrow}</p>
-      <h1 class="m-0 mt-5 max-w-3xl text-4xl font-bold leading-[1.05] md:text-6xl">{hero.title}</h1>
+      <h1 class="m-0 max-w-3xl text-4xl font-bold leading-[1.05] md:text-6xl">{hero.title}</h1>
       <svg class="hero-underline mt-4" width="220" height="14" viewBox="0 0 220 14" fill="none" aria-hidden="true" focusable="false">
         <path pathLength="100" d="M4 8c20-6 40 6 60 0s40-6 60 0 40 6 60 0 30-6 32 0" stroke="url(#heroLineGrad)" stroke-width="4" stroke-linecap="round" />
         <defs>
@@ -21,9 +20,8 @@ import { hero } from '../../data/content';
         </defs>
       </svg>
       <p class="home-hero-lead">« {hero.lead} »</p>
-      <div class="mt-8 flex flex-wrap gap-4">
-        <Button href={hero.ctaPrimary.href} variant="cta">{hero.ctaPrimary.label}</Button>
-        <Button href={hero.ctaSecondary.href} variant="secondary">{hero.ctaSecondary.label}</Button>
+      <div class="mt-10">
+        <Button href={hero.cta.href} variant="primary" class="!min-h-[56px] !px-7 !py-3.5 !text-[1.35rem]">{hero.cta.label}</Button>
       </div>
     </div>
     <div class="relative">
@@ -34,23 +32,48 @@ import { hero } from '../../data/content';
       </div>
     </div>
   </div>
+
+  {/* Invitation à défiler : lien vers la section suivante, flèche animée (rebond doux),
+      immobile si mouvement réduit (préférence système ou bouton « Réduire les animations »). */}
+  <a href={hero.scrollCue.href} class="scroll-cue">
+    <span>{hero.scrollCue.label}</span>
+    <svg class="scroll-cue-arrow" aria-hidden="true" focusable="false" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+  </a>
 </section>
 
 <style>
   .home-hero {
     background: linear-gradient(115deg, #E6FAF1 0%, #E3F2FB 45%, #EEE8FD 100%);
     border-bottom: 1px solid var(--color-blue-soft);
+    /* Première partie en pleine page : tout l'écran sous le bandeau (hauteur réelle du
+       bandeau mesurée par ScrollFX). */
+    min-height: calc(100svh - var(--header-height));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
-  .home-hero-badge {
-    display: inline-block;
-    margin: 0;
-    padding: 0.35rem 0.9rem;
-    background: #fff;
-    border: 2px solid var(--color-blue-deep);
-    border-radius: 999px;
+  .home-hero > .wrap { width: 100%; margin-block: auto; }
+  .scroll-cue {
+    align-self: center;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    margin: 0 0 1.25rem;
+    padding: 0.4rem 0.9rem;
     font-weight: 700;
-    font-size: 0.95rem;
-    color: var(--color-blue-deep);
+    color: var(--color-ink);
+    text-decoration: none;
+    border-radius: 999px;
+  }
+  .scroll-cue:hover span { text-decoration: underline; }
+  .scroll-cue-arrow { color: var(--color-blue-deep); }
+  @media (prefers-reduced-motion: no-preference) {
+    .scroll-cue-arrow { animation: scroll-cue-bounce 1.6s ease-in-out infinite; }
+  }
+  @keyframes scroll-cue-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
   }
   .home-hero-lead {
     max-width: 40rem;

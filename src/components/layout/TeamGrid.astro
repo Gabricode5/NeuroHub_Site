@@ -1,6 +1,5 @@
 ---
 // Grille des membres / conseil d'administration. Photos à ajouter : voir README.
-import Card from '../ui/Card.astro';
 import { porteurs as content } from '../../data/content';
 
 // Accents individuels demandés par la présidente (retours du 17/09/2026) : violet pour
@@ -20,24 +19,33 @@ const accentByName: Record<string, string> = {
   <div class="mt-10">
     <h3 class="m-0 text-2xl font-bold">{group.title}</h3>
     {group.intro && <p class="measure leading-[1.7]">{group.intro}</p>}
-    <div class="reveal-grid mt-6 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    <ul class="team-grid reveal-grid">
       {group.members.map((member) => (
-        <Card padding="none" class="overflow-hidden">
+        <li class="team-member">
           <div
-            class:list={['flex aspect-[4/2] items-center justify-center bg-gradient-to-br text-4xl font-bold text-white', accentByName[member.name] ?? 'from-blue to-blue-deep']}
+            class:list={['team-avatar bg-gradient-to-br', accentByName[member.name] ?? 'from-blue to-blue-deep']}
             role="img"
             aria-label={`Emplacement photo de ${member.name}, à remplacer`}
           >
             {member.initials}
           </div>
-          <div class="p-5">
-            <h4 class="m-0 text-xl font-bold">{member.name}</h4>
-            <p class="mb-0 mt-1 font-semibold text-ink">{member.role}</p>
-            {member.bio && <p class="mb-0 text-base leading-relaxed">{member.bio}</p>}
-          </div>
-        </Card>
+          <h4 class="m-0 mt-4 text-xl font-bold">{member.name}</h4>
+          <p class="mb-0 mt-1 font-semibold text-blue-deep">{member.role}</p>
+        </li>
       ))}
-    </div>
+    </ul>
   </div>
 ))}
 <p class="source mt-5">{content.note}</p>
+
+<style>
+  /* Portraits en cercle (initiales en attendant les photos), nom et rôle centrés dessous. */
+  .team-grid { list-style: none; margin: 1.5rem 0 0; padding: 0; display: grid; gap: 2rem 1.5rem; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); }
+  .team-member { text-align: center; }
+  .team-avatar {
+    display: flex; align-items: center; justify-content: center;
+    width: 9rem; height: 9rem; margin: 0 auto; border-radius: 999px;
+    color: #fff; font-size: 2.4rem; font-weight: 700;
+    box-shadow: 0 0 0 4px #fff, 0 0 0 7px var(--color-blue-soft);
+  }
+</style>

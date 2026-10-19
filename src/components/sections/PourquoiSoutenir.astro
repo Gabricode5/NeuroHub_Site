@@ -1,49 +1,97 @@
 ---
 // Source : fiche projet officielle de l'association (PDF, page 2).
-import Section from '../layout/Section.astro';
+// Fond : photo de salle de classe sous un voile dégradé bleu → violet, plus dense derrière le
+// titre (en haut à gauche) pour garder le titre blanc lisible ;
+// les raisons et les modes de soutien sont posés sur des cartes blanches opaques.
 import Button from '../ui/Button.astro';
 import { pourquoiSoutenir as content } from '../../data/content';
 import { accent } from '../../lib/accents';
 ---
-<Section id="pourquoi-soutenir" tone="tint" eyebrow={content.eyebrow} title={content.title}>
-  <ul class="home-reasons reveal-grid">
-    {content.reasons.map((reason, i) => (
-      <li>
-        <span class="home-check" style={`background:${accent(i).text}`} aria-hidden="true">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
-        </span>
-        <span class="font-semibold">{reason}</span>
-      </li>
-    ))}
-  </ul>
+<section id="pourquoi-soutenir" class="support section-block scroll-mt-20">
+  <img
+    src="/images/soutenir-bg.webp"
+    srcset="/images/soutenir-bg-900.webp 900w, /images/soutenir-bg.webp 1774w"
+    sizes="100vw"
+    width="1774"
+    height="887"
+    alt=""
+    class="support-bg"
+    loading="lazy"
+    decoding="async"
+  />
+  <div class="support-veil" aria-hidden="true"></div>
 
-  <div class="mt-10 grid gap-5 md:grid-cols-2">
-    <div class="home-support bg-blue-deep">
-      <p class="home-support-title">{content.mecenat.title}</p>
-      <p class="m-0">{content.mecenat.text}</p>
+  <div class="wrap relative w-full">
+    <header class="mb-10 max-w-3xl">
+      <h2 class="m-0 text-3xl font-bold leading-tight text-white md:text-5xl">{content.title}</h2>
+    </header>
+
+    <ul class="support-reasons reveal-grid">
+      {content.reasons.map((reason, i) => (
+        <li style={`--accent:${accent(i).bar}`}>
+          <span class="support-check" style={`background:${accent(i).text}`} aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+          </span>
+          <span class="font-semibold">{reason}</span>
+        </li>
+      ))}
+    </ul>
+
+    <div class="support-ways">
+      <div class="support-way">
+        <span class="support-way-icon" aria-hidden="true">🏛️</span>
+        <p class="support-way-title">{content.mecenat.title}</p>
+        <p class="m-0">{content.mecenat.text}</p>
+      </div>
+      <div class="support-way">
+        <span class="support-way-icon" aria-hidden="true">🙌</span>
+        <p class="support-way-title">{content.benevolat.title}</p>
+        <p class="m-0">{content.benevolat.text}</p>
+      </div>
     </div>
-    <div class="home-support" style="background:#6D28D9">
-      <p class="home-support-title">{content.benevolat.title}</p>
-      <p class="m-0">{content.benevolat.text}</p>
+
+    <div class="mt-10 flex justify-center">
+      <Button href={content.more.href} variant="cta" class="!min-h-[56px] !px-7 !py-3.5 !text-[1.35rem]">{content.more.label}</Button>
     </div>
   </div>
-  <Button href={content.more.href} variant="cta" class="mt-10">{content.more.label}</Button>
-</Section>
+</section>
 
 <style>
-  .home-reasons { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
-  @media (min-width: 48rem) { .home-reasons { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  .home-reasons > li {
+  .support { position: relative; overflow: hidden; isolation: isolate; }
+  .support-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+  .support-veil {
+    position: absolute; inset: 0; z-index: -1;
+    background: linear-gradient(160deg, rgba(20, 52, 92, 0.82) 0%, rgba(39, 115, 178, 0.55) 50%, rgba(76, 29, 149, 0.72) 100%);
+  }
+  .support-reasons { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+  @media (min-width: 40rem) { .support-reasons { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 64rem) { .support-reasons { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .support-reasons > li {
     display: flex; gap: 0.9rem; align-items: flex-start;
-    padding: 1rem 1.15rem; background: #fff;
-    border: 1px solid var(--color-blue-soft); border-radius: var(--radius-md, 8px);
+    padding: 1.15rem 1.25rem; background: #fff; color: var(--color-ink);
+    border-left: 6px solid var(--accent); border-radius: var(--radius-md, 8px);
+    box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.55);
     line-height: 1.55;
   }
-  .home-check {
+  .support-check {
     display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
-    width: 1.75rem; height: 1.75rem; border-radius: 999px; margin-top: 0.05rem;
+    width: 2rem; height: 2rem; border-radius: 999px;
   }
-  /* Texte blanc sur bleu profond (4.9:1) et violet #6D28D9 (7.1:1) : AA. */
-  .home-support { padding: 1.75rem; border-radius: var(--radius-md, 8px); color: #fff; line-height: 1.6; }
-  .home-support-title { margin: 0 0 0.6rem; font-family: var(--font-serif); font-size: 1.6rem; font-weight: 700; }
+
+  .support-ways { display: grid; gap: 1.25rem; margin-top: 2.5rem; }
+  @media (min-width: 48rem) { .support-ways { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .support-way {
+    padding: 1.75rem 1.85rem; background: #fff; color: var(--color-ink);
+    border-top: 6px solid transparent;
+    border-image: linear-gradient(90deg, #00B6FF, #7C3AED, #FF005D, #FF8A3D, #8DC63F) 1;
+    box-shadow: 0 14px 30px -16px rgba(0, 0, 0, 0.6);
+    line-height: 1.6;
+  }
+  .support-way-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 3rem; height: 3rem; border-radius: 999px; background: var(--color-blue-pale); font-size: 1.5rem;
+  }
+  .support-way-title { margin: 0.9rem 0 0.5rem; font-family: var(--font-serif); font-size: 1.75rem; font-weight: 700; color: var(--color-blue-deep); }
+
+  :global(body.high-contrast) .support-veil { background: #000; }
 </style>

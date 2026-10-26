@@ -11,7 +11,7 @@ import BudgetTable from '../blocks/BudgetTable.astro';
 import ImpactTable from '../blocks/ImpactTable.astro';
 import MapEmbed from '../blocks/MapEmbed.astro';
 import ContactForm from '../blocks/ContactForm.astro';
-import ScheduleTable from '../blocks/ScheduleTable.astro';
+import QuoteCarousel from '../blocks/QuoteCarousel.astro';
 import { rich } from '../../lib/rich';
 import { accent } from '../../lib/accents';
 import type { SitePage } from '../../data/content';
@@ -32,6 +32,23 @@ const splitTerm = (item: string) => {
 ---
 <div class:list={['std-page', page.wideText && 'std-wide']}>
 <PageHeader eyebrow={page.eyebrow} title={page.title} intro={page.intro} hidden={page.hideTitle} />
+{page.quotes && <QuoteCarousel quotes={page.quotes} image={page.quotesImage} />}
+{page.banner && (
+  <div class="std-banner">
+    <div class="wrap">
+      <img
+        src={page.banner.src}
+        srcset={page.banner.srcSmall ? `${page.banner.srcSmall} 800w, ${page.banner.src} ${page.banner.width}w` : undefined}
+        sizes="min(100vw, 46rem)"
+        width={page.banner.width}
+        height={page.banner.height}
+        alt={page.banner.alt}
+        loading="eager"
+        decoding="async"
+      />
+    </div>
+  </div>
+)}
 {coverImage && (
   <div class="wrap pb-4 pt-10 md:pt-14">
     <img
@@ -84,8 +101,11 @@ const splitTerm = (item: string) => {
         {block.list.map((item, j) => {
           const { term, text } = splitTerm(item);
           return (
-            <li style={`--accent:${accent(j).bar}`}>
-              {term && <p class="std-card-term" style={`color:${accent(j).text}`}>{term}</p>}
+            <li
+              class:list={[term && 'std-card-filled']}
+              style={term ? `--accent:${accent(j).bar};background:${accent(j).fill};color:${accent(j).onFill}` : `--accent:${accent(j).bar}`}
+            >
+              {term && <p class="std-card-term">{term}</p>}
               <p class="m-0" style={`--accent-text:${accent(j).text}`} set:html={rich(text)} />
             </li>
           );
@@ -114,8 +134,7 @@ const splitTerm = (item: string) => {
           ];
           const style = `--accent:${accent(j).bar}`;
           // Encadrés repliables (page collège) : titre + « + », le texte se déplie au clic.
-          // Le tableau de la semaine type reste toujours ouvert.
-          const collapsible = page.wideText && block.subsectionsLayout === 'cards' && sub.custom !== 'schedule';
+          const collapsible = page.wideText && block.subsectionsLayout === 'cards';
           return collapsible ? (
             <details class:list={[...cls, 'std-sub-details']} style={style}>
               <summary>
@@ -134,8 +153,8 @@ const splitTerm = (item: string) => {
                 {sub.list && (sub.listStyle === 'cards' ? (
                   <ol class="std-card-list">
                     {sub.list.map((item, k) => (
-                      <li style={`--accent:${accent(k).bar}`}>
-                        <p class="m-0" style={`--accent-text:${accent(k).text}`} set:html={rich(item)} />
+                      <li class="std-card-filled" style={`--accent:${accent(k).bar};background:${accent(k).fill};color:${accent(k).onFill}`}>
+                        <p class="m-0" set:html={rich(item)} />
                       </li>
                     ))}
                   </ol>
@@ -144,7 +163,6 @@ const splitTerm = (item: string) => {
                     {sub.list.map((item) => <li set:html={rich(item)} />)}
                   </ul>
                 ))}
-                {sub.custom === 'schedule' && <ScheduleTable />}
               </div>
             </details>
           ) : (
@@ -161,8 +179,8 @@ const splitTerm = (item: string) => {
               {sub.list && (sub.listStyle === 'cards' ? (
                 <ol class="std-card-list">
                   {sub.list.map((item, k) => (
-                    <li style={`--accent:${accent(k).bar}`}>
-                      <p class="m-0" style={`--accent-text:${accent(k).text}`} set:html={rich(item)} />
+                    <li class="std-card-filled" style={`--accent:${accent(k).bar};background:${accent(k).fill};color:${accent(k).onFill}`}>
+                      <p class="m-0" set:html={rich(item)} />
                     </li>
                   ))}
                 </ol>
@@ -171,7 +189,6 @@ const splitTerm = (item: string) => {
                   {sub.list.map((item) => <li set:html={rich(item)} />)}
                 </ul>
               ))}
-              {sub.custom === 'schedule' && <ScheduleTable />}
             </div>
           );
         })}
@@ -225,7 +242,7 @@ const splitTerm = (item: string) => {
   .std-quote-close { display: inline-block; margin-left: 0.2em; font-family: var(--font-serif); font-size: 3.2rem; line-height: 0; vertical-align: -0.38em; font-style: normal; color: #6D28D9; }
   /* Texte justifié sous les citations (page association) ; coupure des mots en français
      pour éviter les grands blancs entre les mots. */
-  .std-justify p { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+  .std-justify p { text-align: justify; hyphens: manual; }
   /* Début en gras des cartes : couleur (assombrie) de la bande de la carte. */
   .std-card-list strong { color: var(--accent-text, inherit); }
 
@@ -247,7 +264,21 @@ const splitTerm = (item: string) => {
   /* Page en « textes pleine largeur » (association) : citation, paragraphes, encadrés et
      intro des groupes alignés sur la largeur des cartes, tous justifiés. */
   .std-wide .measure, .std-wide .std-quote, .std-wide .std-callout, .std-wide .std-note { max-width: none; }
-  .std-wide .std-text p, .std-wide .measure, .std-wide .std-quote blockquote, .std-wide .std-card-list p { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+  /* Pas de coupure de mots (« neurodiversité » ne doit jamais être séparé, retour du 26/10/2026). */
+  .std-wide .std-text p, .std-wide .measure, .std-wide .std-quote blockquote, .std-wide .std-card-list p { text-align: justify; hyphens: manual; -webkit-hyphens: manual; }
+  /* Vignettes pleine couleur (principes) : texte aligné à gauche, plus lisible en colonne étroite. */
+  /* Petits écrans : texte aligné à gauche (sans coupure de mots, la justification y creuse de
+     grands blancs entre les mots). */
+  @media (max-width: 40rem) {
+    .std-wide .std-text p, .std-wide .measure, .std-wide .std-quote blockquote, .std-wide .std-card-list p { text-align: left; }
+  }
+  .std-card-filled { border-color: transparent !important; }
+  .std-card-filled strong { color: inherit; }
+
+  /* Encart image en tête de page (collège) : fond bleu ciel, image posée sur une carte blanche. */
+  .std-banner { background: #E0F4FF; border-bottom: 1px solid var(--color-blue-soft); padding-block: clamp(2rem, 5vh, 3.5rem); }
+  .std-banner img { display: block; width: min(100%, 46rem); height: auto; margin-inline: auto; padding: clamp(0.75rem, 2vw, 1.5rem); background: #fff; border-radius: var(--radius-md, 8px); box-shadow: 0 14px 30px -18px rgba(39, 115, 178, 0.6); }
+  .std-wide .std-card-filled p { text-align: left; }
   .std-quote figcaption { margin-top: 1rem; font-weight: 700; color: var(--color-blue-deep); }
 
   .std-with-figure { display: grid; gap: 2rem; align-items: start; }

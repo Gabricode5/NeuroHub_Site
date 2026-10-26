@@ -49,6 +49,8 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-serif); }
 .button-primary { color:var(--color-ink); background:var(--color-blue); }.button-primary:hover { background:color-mix(in srgb, var(--color-blue) 82%, black); }.button-secondary { color:var(--color-blue-deep); border-color:var(--color-blue-deep); background:#fff; }.button-secondary:hover { background:var(--color-blue-pale); }
 /* Vert lime : STRICTEMENT réservé aux boutons "Soutenir / Nous soutenir" (l'engagement),
    jamais ailleurs. Texte foncé dessus : le lime est trop clair pour porter du blanc lisible. */
+/* Orange : bouton de pré-inscription (accueil). Encre foncée dessus : 5.5:1. */
+.button-orange { color:var(--color-ink); background:#FF8A3D; }.button-orange:hover { background:color-mix(in srgb, #FF8A3D 85%, black); }
 .button-cta { color:var(--color-ink); background:var(--color-lime); }.button-cta:hover { background:color-mix(in srgb, var(--color-lime) 85%, black); }
 
 /* Système de cartes unique : angle vif (pas d'arrondi SaaS), pas d'ombre décorative -

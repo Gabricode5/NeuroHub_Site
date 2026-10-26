@@ -1,7 +1,8 @@
 ---
 // Source : fiche projet officielle de l'association (PDF, page 2).
-// Fond : photo de salle de classe sous un voile dégradé bleu → violet, plus dense derrière le
-// titre (en haut à gauche) pour garder le titre blanc lisible ;
+// Fond : photo « oip.jpg.webp » (ville végétalisée, retour du 26/10/2026) sous un voile dégradé
+// bleu → violet, plus dense derrière le titre pour garder le titre blanc lisible. Image source
+// en basse définition (474px) : légèrement floutée pour masquer la pixellisation ;
 // les raisons et les modes de soutien sont posés sur des cartes blanches opaques.
 import Button from '../ui/Button.astro';
 import { pourquoiSoutenir as content } from '../../data/content';
@@ -9,11 +10,9 @@ import { accent } from '../../lib/accents';
 ---
 <section id="pourquoi-soutenir" class="support section-block scroll-mt-20">
   <img
-    src="/images/soutenir-bg.webp"
-    srcset="/images/soutenir-bg-900.webp 900w, /images/soutenir-bg.webp 1774w"
-    sizes="100vw"
-    width="1774"
-    height="887"
+    src="/images/oip.jpg.webp"
+    width="474"
+    height="265"
     alt=""
     class="support-bg"
     loading="lazy"
@@ -58,7 +57,7 @@ import { accent } from '../../lib/accents';
 
 <style>
   .support { position: relative; overflow: hidden; isolation: isolate; }
-  .support-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+  .support-bg { position: absolute; inset: -12px; width: calc(100% + 24px); height: calc(100% + 24px); object-fit: cover; z-index: -2; filter: blur(3px); }
   .support-veil {
     position: absolute; inset: 0; z-index: -1;
     background: linear-gradient(160deg, rgba(20, 52, 92, 0.82) 0%, rgba(39, 115, 178, 0.55) 50%, rgba(76, 29, 149, 0.72) 100%);
@@ -81,7 +80,8 @@ import { accent } from '../../lib/accents';
   .support-ways { display: grid; gap: 1.25rem; margin-top: 2.5rem; }
   @media (min-width: 48rem) { .support-ways { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .support-way {
-    padding: 1.75rem 1.85rem; background: #fff; color: var(--color-ink);
+    /* Fond vert (retour du 26/10/2026), bande arc-en-ciel conservée ; texte blanc 5.1:1. */
+    padding: 1.75rem 1.85rem; background: #2E7D32; color: #fff;
     border-top: 6px solid transparent;
     border-image: linear-gradient(90deg, #00B6FF, #7C3AED, #FF005D, #FF8A3D, #8DC63F) 1;
     box-shadow: 0 14px 30px -16px rgba(0, 0, 0, 0.6);
@@ -89,9 +89,9 @@ import { accent } from '../../lib/accents';
   }
   .support-way-icon {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 3rem; height: 3rem; border-radius: 999px; background: var(--color-blue-pale); font-size: 1.5rem;
+    width: 3rem; height: 3rem; border-radius: 999px; background: #fff; font-size: 1.5rem;
   }
-  .support-way-title { margin: 0.9rem 0 0.5rem; font-family: var(--font-serif); font-size: 1.75rem; font-weight: 700; color: var(--color-blue-deep); }
+  .support-way-title { margin: 0.9rem 0 0.5rem; font-family: var(--font-serif); font-size: 1.75rem; font-weight: 700; color: #fff; }
 
   :global(body.high-contrast) .support-veil { background: #000; }
 </style>

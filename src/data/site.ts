@@ -24,6 +24,9 @@ export const site = {
   // Mettre le PDF dans public/ (ex. public/dossier-presentation.pdf) puis indiquer
   // '/dossier-presentation.pdf' ici. Tant que la valeur vaut '#', le bouton est masqué.
   presentationPdfHref: '#',
+  // Lien HelloAsso du bouton « Adhésion à l'association » (page association), à renseigner.
+  // Tant qu'il est vide, le bouton mène au formulaire de contact.
+  adhesionUrl: '',
 
   mapEmbedSrc: 'https://www.openstreetmap.org/export/embed.html?bbox=2.408%2C48.671%2C2.435%2C48.685&layer=mapnik',
 

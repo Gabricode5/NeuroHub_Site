@@ -1,6 +1,8 @@
 ---
 // Grille des membres / conseil d'administration. Photos à ajouter : voir README.
+import Button from '../ui/Button.astro';
 import { porteurs as content } from '../../data/content';
+import { site } from '../../data/site';
 
 // Accents individuels demandés par la présidente (retours du 17/09/2026) : violet pour
 // Frédéric Bonniot, rose pour Inès Ramdani. Les autres membres gardent le bandeau bleu
@@ -22,13 +24,17 @@ const accentByName: Record<string, string> = {
     <ul class="team-grid reveal-grid">
       {group.members.map((member) => (
         <li class="team-member">
-          <div
-            class:list={['team-avatar bg-gradient-to-br', accentByName[member.name] ?? 'from-blue to-blue-deep']}
-            role="img"
-            aria-label={`Emplacement photo de ${member.name}, à remplacer`}
-          >
-            {member.initials}
-          </div>
+          {member.photo ? (
+            <img src={member.photo} alt="" width="288" height="288" class="team-avatar team-photo" loading="lazy" decoding="async" />
+          ) : (
+            <div
+              class:list={['team-avatar bg-gradient-to-br', accentByName[member.name] ?? 'from-blue to-blue-deep']}
+              role="img"
+              aria-label={`Emplacement photo de ${member.name}, à remplacer`}
+            >
+              {member.initials}
+            </div>
+          )}
           <h4 class="m-0 mt-4 text-xl font-bold">{member.name}</h4>
           <p class="mb-0 mt-1 font-semibold text-blue-deep">{member.role}</p>
         </li>
@@ -37,6 +43,12 @@ const accentByName: Record<string, string> = {
   </div>
 ))}
 <p class="source mt-5">{content.note}</p>
+
+{/* Adhésion (retour du 26/10/2026) : lien HelloAsso à renseigner dans site.ts (adhesionUrl) ;
+    en attendant, le bouton mène au formulaire de contact. */}
+<div class="mt-10">
+  <Button href={site.adhesionUrl || '/soutenir#contact'} variant="orange" class="!min-h-[56px] !px-7 !py-3.5 !text-[1.3rem]">Adhésion à l’association</Button>
+</div>
 
 <style>
   /* Portraits en cercle (initiales en attendant les photos), nom et rôle centrés dessous. */
@@ -48,4 +60,5 @@ const accentByName: Record<string, string> = {
     color: #fff; font-size: 2.4rem; font-weight: 700;
     box-shadow: 0 0 0 4px #fff, 0 0 0 7px var(--color-blue-soft);
   }
+  .team-photo { display: block; object-fit: cover; }
 </style>

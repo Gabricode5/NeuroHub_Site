@@ -1,0 +1,141 @@
+---
+// Citations qui défilent (page association) : encart bleu ciel + dessin « papillon livre 2 »
+// d'Inès Ramdani. Défilement automatique toutes les 10 s (sans bouton lecture/pause, retour du
+// 26/10/2026), arrêt au survol / au focus, flèches précédent-suivant, pas de défilement
+// automatique si mouvement réduit (préférence système ou bouton « Réduire les animations »).
+interface Props {
+  quotes: { text: string; author: string }[];
+  image?: string;
+}
+const { quotes, image } = Astro.props;
+---
+<section class="quotes" aria-roledescription="carrousel" aria-label="Citations">
+  <div class="wrap quotes-inner">
+    <div class="quotes-box" data-quotes>
+      <div class="quotes-slides" aria-live="off">
+        {quotes.map((quote, i) => (
+          <figure
+            class="quotes-slide"
+            role="group"
+            aria-roledescription="citation"
+            aria-label={`${i + 1} sur ${quotes.length}`}
+            hidden={i !== 0}
+          >
+            <blockquote class="m-0">
+              <span class="quotes-mark" aria-hidden="true">«</span>{quote.text}<span class="quotes-mark quotes-mark-end" aria-hidden="true">»</span>
+            </blockquote>
+            <figcaption>— {quote.author}</figcaption>
+          </figure>
+        ))}
+      </div>
+
+      {quotes.length > 1 && (
+        <div class="quotes-controls">
+          <button type="button" class="quotes-btn" data-prev aria-label="Citation précédente">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6" /></svg>
+          </button>
+          <div class="quotes-dots" aria-hidden="true">
+            {quotes.map((_, i) => <span class:list={['quotes-dot', i === 0 && 'is-active']}></span>)}
+          </div>
+          <button type="button" class="quotes-btn" data-next aria-label="Citation suivante">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+          </button>
+        </div>
+      )}
+    </div>
+
+    {image && <img src={image} width="384" height="538" alt="" class="quotes-art" loading="eager" decoding="async" />}
+  </div>
+</section>
+
+<style>
+  .quotes { background: #E0F4FF; border-bottom: 1px solid var(--color-blue-soft); }
+  .quotes-inner {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+    padding-block: clamp(2.5rem, 6vh, 4.5rem);
+  }
+  @media (min-width: 52rem) { .quotes-inner { grid-template-columns: minmax(0, 1fr) 15rem; gap: 3rem; } }
+  .quotes-slides { display: grid; min-height: 12rem; }
+  /* Toutes les citations dans la même cellule : la hauteur de l'encart suit la plus longue,
+     rien ne saute au changement de citation. */
+  .quotes-slide { grid-area: 1 / 1; margin: 0; display: flex; flex-direction: column; justify-content: center; }
+  .quotes-slide[hidden] { display: flex; visibility: hidden; }
+  .quotes-slide blockquote {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.25rem, 2.1vw, 1.65rem);
+    line-height: 1.5;
+    text-align: justify;
+    hyphens: manual;
+  }
+  @media (max-width: 40rem) { .quotes-slide blockquote { text-align: left; } }
+  .quotes-mark { font-family: var(--font-serif); font-style: normal; font-size: 1.6em; line-height: 0; vertical-align: -0.2em; color: #6D28D9; margin-right: 0.15em; }
+  .quotes-mark-end { margin: 0 0 0 0.15em; }
+  .quotes-slide figcaption { margin-top: 1rem; font-weight: 700; color: var(--color-blue-deep); }
+  @media (prefers-reduced-motion: no-preference) {
+    .quotes-slide:not([hidden]) { animation: quotes-in .5s ease-out; }
+  }
+  @keyframes quotes-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .quotes-controls { display: flex; align-items: center; gap: 0.6rem; margin-top: 1.5rem; }
+  .quotes-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; padding: 0;
+    border: 2px solid var(--color-blue-deep); border-radius: 999px;
+    background: #fff; color: var(--color-blue-deep); cursor: pointer;
+  }
+  .quotes-btn:hover { background: var(--color-blue-pale); }
+  .quotes-dots { display: flex; gap: 0.4rem; }
+  .quotes-dot { width: 10px; height: 10px; border-radius: 999px; background: var(--color-blue-soft); }
+  .quotes-dot.is-active { background: var(--color-blue-deep); }
+
+  .quotes-art { display: block; width: min(100%, 15rem); height: auto; margin-inline: auto; }
+  @media (max-width: 51.99rem) { .quotes-art { width: 9rem; order: -1; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-quotes]').forEach((box) => {
+    const slides = Array.from(box.querySelectorAll<HTMLElement>('.quotes-slide'));
+    const dots = Array.from(box.querySelectorAll<HTMLElement>('.quotes-dot'));
+    const live = box.querySelector<HTMLElement>('.quotes-slides');
+    if (slides.length < 2) return;
+
+    let index = 0;
+    let timer: number | undefined;
+    let hovered = false;
+    // Pas de défilement automatique si mouvement réduit (les flèches restent disponibles).
+    let paused =
+      matchMedia('(prefers-reduced-motion: reduce)').matches || document.body.classList.contains('motion-off');
+
+    const show = (i: number) => {
+      index = (i + slides.length) % slides.length;
+      slides.forEach((s, k) => (s.hidden = k !== index));
+      dots.forEach((d, k) => d.classList.toggle('is-active', k === index));
+    };
+    const stop = () => { window.clearInterval(timer); timer = undefined; };
+    const start = () => {
+      stop();
+      if (paused || hovered) return;
+      timer = window.setInterval(() => show(index + 1), 10000);
+    };
+    // Annonce des changements aux lecteurs d'écran seulement quand rien ne défile tout seul.
+    const syncLive = () => live?.setAttribute('aria-live', paused ? 'polite' : 'off');
+
+    box.querySelector('[data-prev]')?.addEventListener('click', () => { show(index - 1); start(); });
+    box.querySelector('[data-next]')?.addEventListener('click', () => { show(index + 1); start(); });
+    box.addEventListener('mouseenter', () => { hovered = true; stop(); });
+    box.addEventListener('mouseleave', () => { hovered = false; start(); });
+    box.addEventListener('focusin', () => { hovered = true; stop(); });
+    box.addEventListener('focusout', () => { hovered = false; start(); });
+    document.addEventListener('a11y:motion-off', (e) => {
+      paused = Boolean((e as CustomEvent<{ off: boolean }>).detail?.off) || matchMedia('(prefers-reduced-motion: reduce)').matches;
+      syncLive();
+      start();
+    });
+
+    syncLive();
+    start();
+  });
+</script>

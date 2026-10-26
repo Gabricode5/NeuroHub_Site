@@ -3,10 +3,10 @@ interface Props {
   href: string;
   /** 'cta' = accent lime, strictement réservé aux boutons "Soutenir / Nous soutenir"
       (voir passe "identité officielle" — le vert ne sert qu'à l'engagement/mécénat). */
-  variant?: 'primary' | 'secondary' | 'cta';
+  variant?: 'primary' | 'secondary' | 'cta' | 'orange';
   class?: string;
 }
 const { href, variant = 'primary', class: className } = Astro.props;
-const variantClass = { primary: 'button-primary', secondary: 'button-secondary', cta: 'button-cta' }[variant];
+const variantClass = { primary: 'button-primary', secondary: 'button-secondary', cta: 'button-cta', orange: 'button-orange' }[variant];
 ---
 <a class:list={['button', variantClass, className]} href={href}><slot /></a>

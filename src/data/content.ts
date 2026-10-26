@@ -6,6 +6,8 @@ export interface TeamMember {
   role: string;
   bio?: string;
   initials: string;
+  /** Photo (ex. '/images/membres/pascaline.webp') ; à défaut, initiales dans le cercle. */
+  photo?: string;
 }
 
 export interface PillarItem {
@@ -20,8 +22,8 @@ export const hero = {
   lead: 'Permettre à chaque jeune d’accéder aux apprentissages, de développer ses propres talents, et de trouver sa place en société.',
   // Pré-inscription : mène au formulaire de contact de la page Nous soutenir (en attendant
   // un formulaire dédié).
-  cta: { href: '/soutenir#contact', label: 'Se pré-inscrire' },
-  scrollCue: { href: '#neurodiversite', label: 'Découvrir l’école' },
+  cta: { href: '/soutenir#contact', label: 'Pré-inscription' },
+  scrollCue: { href: '#besoin', label: 'Découvrir l’école' },
   intentionText: 'Projet d’établissement éducatif et inclusif pour adolescents adapté aux profils neuro-atypiques (TND : TSA, TDAH, DYS, etc.). Ouverture pour septembre 2027.'
 };
 
@@ -42,7 +44,7 @@ export const besoin = {
   eyebrow: 'Adapté à tous les jeunes de 10 à 18 ans, y compris aux profils neuro-atypiques',
   title: 'Adapté à tous les jeunes de 10 à 18 ans, y compris aux profils neuro-atypiques',
   paragraphs: [
-    'Dans un contexte de déscolarisation qui s’intensifie au collège, liée aux difficultés, au manque d’aménagements et aux enjeux identitaires exposant la santé mentale, l’Association du Collège de la Neurodiversité apporte une solution alternative :'
+    'Dans un contexte de déscolarisation qui s’intensifie au collège, liée aux difficultés, au manque d’aménagements et aux enjeux identitaires exposant la santé mentale, l’Association du Collège de la Neurodiversité apporte une solution alternative pour :'
   ],
   bullets: [
     'Donner accès et du sens aux apprentissages.',
@@ -75,15 +77,15 @@ export const porteurs = {
       initials: 'MG' },
     { name: 'Louis Glandières', role: 'Membre du conseil d’administration',
       initials: 'LG' }
-  ] satisfies TeamMember[],
+  ] as TeamMember[],
   benefactorsIntro: 'Notre association a la chance de pouvoir aussi compter sur ses membres bienfaiteurs pour concrétiser les projets :',
   benefactors: [
     { name: 'Inès Ramdani', role: 'Soutien et participation à la co-construction du projet du collège, créatrice du logo de l’association',
       initials: 'IR' },
     { name: 'Lionel Monbrison', role: 'Soutien et participation à la co-construction du projet du collège, référent pédagogique', initials: 'LM' },
     { name: 'Gaby', role: 'Créateur du site Internet', initials: 'G' }
-  ] satisfies TeamMember[],
-  note: 'Les bandeaux colorés sont des emplacements photo, à remplacer par les portraits.'
+  ] as TeamMember[],
+  note: 'Les cercles colorés sont des emplacements photo, à remplacer par les portraits.'
 };
 
 // ————————————————————————————————————————————————————————————————
@@ -134,7 +136,6 @@ export interface PageSubsection {
   variant?: 'note';
   /** Pleine largeur dans une grille de cartes. */
   wide?: boolean;
-  custom?: 'schedule';
 }
 
 export interface SitePage {
@@ -147,6 +148,11 @@ export interface SitePage {
   wideText?: boolean;
   /** Titre de page masqué visuellement (conservé pour les lecteurs d'écran). */
   hideTitle?: boolean;
+  /** Citations qui défilent en tête de page (encart + dessin). */
+  quotes?: { text: string; author: string }[];
+  quotesImage?: string;
+  /** Image en tête de page, dans un encart bleu ciel. */
+  banner?: { src: string; srcSmall?: string; width: number; height: number; alt: string };
   blocks: PageBlock[];
 }
 
@@ -159,15 +165,18 @@ export const associationPage: SitePage = {
   // largeur du contenu, justifiés, même taille (retours du 19/10/2026).
   hideTitle: true,
   wideText: true,
+  // Citations qui défilent en tête de page, dans un encart bleu ciel avec le dessin
+  // « papillon livre 2 » d'Inès (retour du 26/10/2026).
+  quotes: [
+    { text: 'Pour que les personnes neurodivergentes puissent vivre de manière authentique tout en arrivant à participer à la société. Arrêter de survivre en mode camouflé et commencer à s’épanouir vraiment, en étant soi sans peur. Arrêter de cacher ses particularités (stims, façon de parler, sensibilités sensorielles, etc.) pour éviter le rejet, les jugements ou la discrimination.', author: 'Inès, membre de l’association' },
+    { text: 'Il existe des mondes intérieurs si riches, si sensibles, si lumineux, qu’ils apprennent souvent à se cacher pour survivre. Si nous apprenons à mieux voir une autre manière d’être au monde, nous serons capables d’accomplir les plus belles choses.', author: 'Josef Schovanec, écrivain, philosophe autiste' }
+  ],
+  quotesImage: '/images/papillon-livre-2.webp',
   // Source : brief « Contenu site Internet », page association (parties 1 à 3 + rapports d’activité).
   blocks: [
     {
       id: 'qui-sommes-nous',
       title: 'Qui sommes-nous ?',
-      quote: {
-        text: 'Pour que les personnes neurodivergentes puissent vivre de manière authentique tout en arrivant à participer à la société. Arrêter de survivre en mode camouflé et commencer à s’épanouir vraiment, en étant soi sans peur. Arrêter de cacher ses particularités (stims, façon de parler, sensibilités sensorielles, etc.) pour éviter le rejet, les jugements ou la discrimination.',
-        author: 'Inès, membre de l’association'
-      },
       body: [
         'Le Collège de la Neurodiversité est une association à but non lucratif régie par la loi du 1er juillet 1901 et le décret du 16 août 1901, fondée par un groupe de personnes aux profils neuro-atypiques et neurotypiques. Tous directement ou indirectement concernés, l’association veut porter une vision juste et proche de la réalité afin de proposer des solutions concrètes et respectueuses des individus.',
         'L’association a pour objet de **créer les conditions favorables à la neurodiversité dans notre société**, autrement dit d’aider les personnes aux profils neurodivergents à se faire une place dans la société et de lutter contre leur exclusion sociale, qu’elles soient ou non reconnues en situation de handicap.',
@@ -175,12 +184,8 @@ export const associationPage: SitePage = {
       ]
     },
     {
-      id: 'philosophie-principes',
-      title: 'Philosophie et principes',
-      quote: {
-        text: 'Il existe des mondes intérieurs si riches, si sensibles, si lumineux, qu’ils apprennent souvent à se cacher pour survivre. Si nous apprenons à mieux voir une autre manière d’être au monde, nous serons capables d’accomplir les plus belles choses.',
-        author: 'Josef Schovanec, écrivain, philosophe autiste'
-      },
+      id: 'vision-principes',
+      title: 'Vision et principes',
       body: [
         'Le **Collège de la Neurodiversité** défend une société dans laquelle chaque personne, quel que soit son fonctionnement neurocognitif ou sensoriel, peut vivre de manière authentique, accéder à ses droits, développer ses talents et participer pleinement à la vie sociale.',
         'La **neurodiversité** est considérée comme une **composante de la diversité humaine**.',
@@ -189,16 +194,16 @@ export const associationPage: SitePage = {
       listStyle: 'cards',
       listIntro: 'Nos projets sont guidés par les grands principes suivants :',
       list: [
-        '**Reconnaissance de la neurodiversité** : reconnaître la diversité des fonctionnements cognitifs, sensoriels et attentionnels.',
-        '**Respect des individualités** : privilégier la valorisation des singularités plutôt que la recherche d’uniformité, adapter l’accompagnement aux besoins et aux aptitudes de chacun.',
-        '**Adaptation de l’environnement** : agir sur les conditions d’aménagement de l’espace, organisationnelles, matérielles, relationnelles, etc. plutôt que de faire reposer toute l’adaptation sur la personne au profil neuro-atypique.',
-        '**Inclusion réciproque** : favoriser la collaboration et les interactions entre le milieu neurotypique et neuro-atypique en co-construisant un monde ouvert et adapté à tous.',
-        '**Autodétermination** : permettre à chacun de participer aux choix qui concernent ses besoins, son parcours et ses projets.',
-        '**Citoyenneté** : vivre avec les autres, respecter les droits d’autrui et contribuer à la vie collective.'
+        '**Reconnaissance de la neurodiversité** : Reconnaître la diversité des fonctionnements cognitifs, sensoriels et attentionnels.',
+        '**Respect des individualités** : Privilégier la valorisation des singularités plutôt que la recherche d’uniformité, adapter l’accompagnement aux besoins et aux aptitudes de chacun.',
+        '**Adaptation de l’environnement** : Agir sur les conditions d’aménagement de l’espace, organisationnelles, matérielles, relationnelles, etc. plutôt que de faire reposer toute l’adaptation sur la personne au profil neuro-atypique.',
+        '**Inclusion réciproque** : Favoriser la collaboration et les interactions entre le milieu neurotypique et neuro-atypique en co-construisant un monde ouvert et adapté à tous.',
+        '**Autodétermination** : Permettre à chacun de participer aux choix qui concernent ses besoins, son parcours et ses projets.',
+        '**Citoyenneté** : Vivre avec les autres, respecter les droits d’autrui et contribuer à la vie collective.'
       ],
       subsections: [
         {
-          title: 'Définition',
+          title: 'Qu’est-ce que la neurodiversité ?',
           variant: 'note',
           body: [
             '*Est entendue par « neurodiversité » la variabilité naturelle du fonctionnement neurologique de l’être humain. La neurodivergence s’exprime par des différences cognitives et sensorielles significatives chez des individus s’éloignant de la moyenne de la population générale. Les troubles du neurodéveloppement en sont des exemples (comme l’autisme, les troubles de l’attention avec ou sans hyperactivité, les troubles dys, etc.). D’autres différences neurologiques peuvent également être considérées dans l’approche de la neurodiversité, telles que la trisomie 21 par exemple. Ces différences peuvent créer des situations de handicap et des inégalités des chances face à l’éducation et à l’emploi, excluant ces personnes de la société. Vivre dans la neurodiversité, c’est accepter les différences neurocognitives et sensorielles de chacun en respectant leurs besoins spécifiques et en considérant leurs qualités et leurs talents, même s’ils ne sont pas ancrés dans la conformité.*'
@@ -235,22 +240,24 @@ export const collegePage: SitePage = {
   // pleine largeur justifiés, encadrés « Comment ? » repliables (retour du 19/10/2026).
   hideTitle: true,
   wideText: true,
+  // Schéma en tête de page, sur fond bleu ciel, sans la signature ni la légende du bas
+  // (retour du 26/10/2026). « Pour qui ? » suit directement.
+  banner: {
+    src: '/images/schema-college-sans-signature.webp',
+    srcSmall: '/images/schema-college-sans-signature-800.webp',
+    width: 1254,
+    height: 1075,
+    alt: 'Schéma du modèle du collège. Au centre : le jeune, au cœur de notre projet. Autour de lui, trois partenaires : les parents, des partenaires au quotidien ; les enseignants, une pédagogie bienveillante ; les intervenants, des expertises complémentaires. Sur le cercle extérieur, six actions : écouter pour comprendre, comprendre pour mieux agir, adapter aux besoins de chacun, accompagner chaque jeune dans son projet, partager dans l’intelligence collective, construire ensemble un avenir serein.'
+  },
   // Source : brief « Contenu site Internet », page collège.
   blocks: [
     {
       id: 'pour-qui',
       title: 'Pour qui ?',
-      figure: {
-        src: '/images/schema-modele-college.webp',
-        srcSmall: '/images/schema-modele-college-800.webp',
-        width: 1254,
-        height: 1254,
-        alt: 'Schéma « Un collège, ensemble, pour chaque jeune ». Au centre : le jeune, au cœur de notre projet. Autour de lui, trois partenaires : les parents, des partenaires au quotidien ; les enseignants, une pédagogie bienveillante ; les intervenants, des expertises complémentaires. Sur le cercle extérieur, six actions : écouter pour comprendre, comprendre pour mieux agir, adapter aux besoins de chacun, accompagner chaque jeune dans son projet, partager dans l’intelligence collective, construire ensemble un avenir serein.'
-      },
       body: [
-        'Au **Collège de la Neurodiversité**, nous accueillons des **jeunes de 10 à 18 ans**, qu’ils soient neuro-atypiques ou neurotypiques. **Notre pédagogie s’adapte à tous : elle respecte les rythmes, les besoins et les forces de chaque élève, notamment pour les jeunes présentant un TSA, un TDAH, des troubles dys, un haut potentiel ou d’autres particularités du neurodéveloppement.** Chacun peut y trouver un environnement bienveillant et ajusté.',
-        'Notre établissement n’est pas un lieu médico-social. Nous recevons donc des jeunes capables de participer à la vie quotidienne du collège en autonomie.',
-        'L’admission se construit en douceur, à travers plusieurs rencontres avec le jeune et sa famille. Elles permettent de comprendre ses besoins, de vérifier l’adhésion à notre pédagogie individualisée, à l’autonomie dans les apprentissages et au principe d’autodétermination.',
+        'Au **Collège de la Neurodiversité**, nous accueillons des **jeunes de 10 à 18 ans**, ayant déjà acquis des apprentissages du cycle élémentaire, qu’ils soient neuro-atypiques ou neurotypiques. **Notre pédagogie s’adapte à tous : elle respecte les rythmes, les besoins et les forces de chaque élève, notamment pour les jeunes présentant un TSA, un TDAH, des troubles dys, un haut potentiel ou d’autres particularités du neurodéveloppement.** Chacun peut y trouver un environnement bienveillant et ajusté.',
+        'Notre établissement n’est pas un lieu médico-social. Nous recevons donc des jeunes capables de participer à la vie quotidienne du collège.',
+        'L’admission se construit en douceur, à travers plusieurs rencontres avec le jeune et sa famille. Elles permettent de comprendre ses besoins, de vérifier l’adhésion à notre pédagogie individualisée et au principe d’autodétermination.',
         'Une période d’immersion vient ensuite confirmer que le jeune se sent bien au collège et que nous pouvons répondre pleinement à ses besoins.'
       ]
     },
@@ -333,19 +340,12 @@ export const collegePage: SitePage = {
           ]
         },
         {
-          title: 'Notre semaine type',
-          icon: '🗓️',
-          wide: true,
-          body: ['Semaine aménagée de 4 jours d’école avec pause le mercredi, afin de respecter un temps de repos et de déconnexion essentiel pour les jeunes.'],
-          custom: 'schedule'
-        },
-        {
           title: 'Des experts pour accompagner les talents des jeunes',
           icon: '🌟',
           body: ['Au **Collège de la Neurodiversité**, les projets prennent vie grâce à l’accompagnement d’**intervenants experts** dans les domaines concernés. Leur rôle n’est pas de faire à la place des élèves, mais de **les guider, les encourager et les aider à développer leurs compétences**. Ils deviennent des partenaires de progression, présents à chaque étape, pour soutenir l’autonomie et nourrir la curiosité.']
         },
         {
-          title: 'Des partenariats qui ouvrent le monde',
+          title: 'Des partenariats qui ouvrent sur le monde',
           icon: '🤝',
           body: [
             'Pour les projets collectifs, le collège s’appuie sur des **entreprises, des associations et des acteurs locaux**. Ces collaborations, souvent menées dans le cadre de mécénats de compétences ou de partenariats, permettent aux jeunes d’être accompagnés dans les aspects techniques, créatifs ou de production.',
@@ -363,29 +363,18 @@ export const collegePage: SitePage = {
         }
       ]
     },
-    { id: 'organisation-participative', title: 'Organisation participative', todo: 'Le brief annonce cette partie sans la rédiger : texte à fournir.' }
+    {
+      id: 'organisation-participative',
+      title: 'Organisation participative',
+      body: [
+        'Notre collège se veut participatif avec l’implication des familles pour accompagner les jeunes 1 jour par semaine, avec un fonctionnement sous forme de roulement.',
+        'L’ensemble des parents-accompagnants sont formés à la pédagogie et aux approches d’accompagnement par l’enseignant directeur et l’éducatrice spécialisée référente.',
+        'Il est indispensable d’adhérer à la vision et aux principes du Collège de la Neurodiversité pour pouvoir assurer la mission d’accompagnement des jeunes dans le respect de l’autodétermination et du potentiel de chacun.'
+      ]
+    }
   ]
 };
 
-// « Notre semaine type » (brief page collège) : mercredi libre. Une ligne = un créneau ;
-// `all` = activité commune aux 4 jours, `days` = une matière par jour (lundi, mardi, jeudi, vendredi).
-export const semaineType = {
-  caption: 'Notre semaine type : lundi, mardi, jeudi et vendredi, mercredi libre',
-  days: ['Lundi', 'Mardi', 'Jeudi', 'Vendredi'],
-  slots: [
-    { time: '8h30', all: 'Accueil des élèves' },
-    { time: '9h00', all: 'Module connaissance et développement de soi (neuroscientifique)' },
-    { time: '9h30', all: 'Météo du jour' },
-    { time: '10h00', days: ['Cours pédagogique : français', 'Cours pédagogique : maths', 'Cours pédagogique : français', 'Cours pédagogique : maths'] },
-    { time: '11h00', days: ['Cours pédagogique : histoire-géographie et éducation morale et civique', 'Cours pédagogique : langues vivantes et technologie', 'Cours pédagogique : artistique et sciences et vie de la terre', 'Cours pédagogique : éducation sportive et physique-chimie'] },
-    { time: '12h00', all: 'Déjeuner' },
-    { time: '13h00', all: 'Ateliers de groupe' },
-    { time: '13h30', all: 'Interventions sujets sociétaux' },
-    { time: '14h00 – 15h30', all: 'Projets collectifs – socle commun' },
-    { time: '15h45 – 17h00', all: 'Projets individuels – socle commun' },
-    { time: '17h30', all: 'Fin des cours – « séance détente » – débrief de la journée' }
-  ] as { time: string; all?: string; days?: string[] }[]
-};
 
 export const soutenirPage: SitePage = {
   navLabel: 'Nous soutenir',

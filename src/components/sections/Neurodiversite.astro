@@ -8,7 +8,6 @@ import { accent } from '../../lib/accents';
   <ol class="std-card-list home-ambition reveal-grid">
     {content.items.map((item, i) => (
       <li style={`--accent:${accent(i).bar}`}>
-        <span class="std-card-num" style={`color:${accent(i).text}`} aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
         <p class="m-0 text-lg font-semibold">{item}</p>
       </li>
     ))}

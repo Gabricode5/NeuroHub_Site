@@ -22,9 +22,9 @@ export const hero = {
   lead: 'Permettre à chaque jeune d’accéder aux apprentissages, de développer ses propres talents, et de trouver sa place en société.',
   // Pré-inscription : mène au formulaire de contact de la page Nous soutenir (en attendant
   // un formulaire dédié).
-  cta: { href: '/soutenir#contact', label: 'Pré-inscription' },
-  scrollCue: { href: '#besoin', label: 'Découvrir l’école' },
-  intentionText: 'Projet d’établissement éducatif et inclusif pour adolescents adapté aux profils neuro-atypiques (TND : TSA, TDAH, DYS, etc.). Ouverture pour septembre 2027.'
+  cta: { href: '/contact', label: 'Pré-inscription' },
+  scrollCue: { href: '#besoin', label: 'Découvrir le collège' },
+  intentionText: 'Projet d’établissement éducatif et inclusif adapté aux profils neuro-atypiques (TND : TSA, TDAH, DYS, etc.). Ouverture pour septembre 2027.'
 };
 
 // « Notre ambition / Nous bâtissons » : reprise intégrale de la fiche projet (page 1).
@@ -60,7 +60,7 @@ export const projet = {
     { title: 'Une réponse éducative concrète', text: 'Effectifs réduits et apprentissages adaptés.' },
     { title: 'Une approche par projets', text: 'Expérimenter et fabriquer, coopérer ensemble, donner du sens.' },
     { title: 'Vers l’autonomie', text: 'Connaissance de soi, compétences psychosociales, orientation et projet pro.' },
-    { title: 'Une logique d’inclusion réciproque', text: 'Vie collective partagée et interactions sociales.' }
+    { title: 'Une logique de réciprocité', text: 'Vie collective partagée et interactions sociales.' }
   ] satisfies PillarItem[]
 };
 
@@ -70,22 +70,22 @@ export const porteurs = {
   // Source : brief « Contenu site Internet », page association, partie 3.
   board: [
     { name: 'Pascaline Ravera', role: 'Présidente',
-      initials: 'PR' },
+      initials: 'PR', photo: '/images/membres/pascaline-ravera.webp' },
     { name: 'Frédéric Bonniot', role: 'Co-président',
-      initials: 'FB' },
+      initials: 'FB', photo: '/images/membres/frederic-bonniot.webp' },
     { name: 'Maëlys Garcia', role: 'Trésorière',
-      initials: 'MG' },
+      initials: 'MG', photo: '/images/membres/maelys-garcia.webp' },
     { name: 'Louis Glandières', role: 'Membre du conseil d’administration',
-      initials: 'LG' }
+      initials: 'LG', photo: '/images/membres/louis-glandieres.webp' }
   ] as TeamMember[],
   benefactorsIntro: 'Notre association a la chance de pouvoir aussi compter sur ses membres bienfaiteurs pour concrétiser les projets :',
   benefactors: [
     { name: 'Inès Ramdani', role: 'Soutien et participation à la co-construction du projet du collège, créatrice du logo de l’association',
-      initials: 'IR' },
+      initials: 'IR', photo: '/images/membres/ines-ramdani.webp' },
     { name: 'Lionel Monbrison', role: 'Soutien et participation à la co-construction du projet du collège, référent pédagogique', initials: 'LM' },
-    { name: 'Gaby', role: 'Créateur du site Internet', initials: 'G' }
+    { name: 'Gaby', role: 'Créateur du site Internet', initials: 'G', photo: '/images/membres/gabriel-guery.webp' }
   ] as TeamMember[],
-  note: 'Les cercles colorés sont des emplacements photo, à remplacer par les portraits.'
+  note: 'Photo à venir pour Lionel Monbrison.'
 };
 
 // ————————————————————————————————————————————————————————————————
@@ -118,8 +118,8 @@ export interface PageBlock {
   listStyle?: 'cards';
   /** 'cards' : les sous-parties s'affichent en grille de cartes (2 colonnes). */
   subsectionsLayout?: 'cards';
-  /** 'callout' : le texte du bloc est posé dans un encadré coloré. */
-  variant?: 'callout';
+  /** 'callout' : le texte du bloc est posé dans un encadré coloré ; 'shadow' : idem, avec ombre portée. */
+  variant?: 'callout' | 'shadow';
   /** Sous-parties (titre de niveau 3), affichées après le reste du bloc. */
   subsections?: PageSubsection[];
 }
@@ -151,8 +151,10 @@ export interface SitePage {
   /** Citations qui défilent en tête de page (encart + dessin). */
   quotes?: { text: string; author: string }[];
   quotesImage?: string;
+  /** Bouton affiché tout en bas de la page. */
+  endCta?: { href: string; label: string };
   /** Image en tête de page, dans un encart bleu ciel. */
-  banner?: { src: string; srcSmall?: string; width: number; height: number; alt: string };
+  banner?: { src: string; srcSmall?: string; smallWidth?: number; width: number; height: number; alt: string };
   blocks: PageBlock[];
 }
 
@@ -197,7 +199,7 @@ export const associationPage: SitePage = {
         '**Reconnaissance de la neurodiversité** : Reconnaître la diversité des fonctionnements cognitifs, sensoriels et attentionnels.',
         '**Respect des individualités** : Privilégier la valorisation des singularités plutôt que la recherche d’uniformité, adapter l’accompagnement aux besoins et aux aptitudes de chacun.',
         '**Adaptation de l’environnement** : Agir sur les conditions d’aménagement de l’espace, organisationnelles, matérielles, relationnelles, etc. plutôt que de faire reposer toute l’adaptation sur la personne au profil neuro-atypique.',
-        '**Inclusion réciproque** : Favoriser la collaboration et les interactions entre le milieu neurotypique et neuro-atypique en co-construisant un monde ouvert et adapté à tous.',
+        '**Réciprocité** : Favoriser la collaboration et les interactions entre le milieu neurotypique et neuro-atypique en co-construisant un monde ouvert et adapté à tous.',
         '**Autodétermination** : Permettre à chacun de participer aux choix qui concernent ses besoins, son parcours et ses projets.',
         '**Citoyenneté** : Vivre avec les autres, respecter les droits d’autrui et contribuer à la vie collective.'
       ],
@@ -206,7 +208,9 @@ export const associationPage: SitePage = {
           title: 'Qu’est-ce que la neurodiversité ?',
           variant: 'note',
           body: [
-            '*Est entendue par « neurodiversité » la variabilité naturelle du fonctionnement neurologique de l’être humain. La neurodivergence s’exprime par des différences cognitives et sensorielles significatives chez des individus s’éloignant de la moyenne de la population générale. Les troubles du neurodéveloppement en sont des exemples (comme l’autisme, les troubles de l’attention avec ou sans hyperactivité, les troubles dys, etc.). D’autres différences neurologiques peuvent également être considérées dans l’approche de la neurodiversité, telles que la trisomie 21 par exemple. Ces différences peuvent créer des situations de handicap et des inégalités des chances face à l’éducation et à l’emploi, excluant ces personnes de la société. Vivre dans la neurodiversité, c’est accepter les différences neurocognitives et sensorielles de chacun en respectant leurs besoins spécifiques et en considérant leurs qualités et leurs talents, même s’ils ne sont pas ancrés dans la conformité.*'
+            'Est entendue par « neurodiversité » la variabilité naturelle du fonctionnement neurologique de l’être humain. La neurodivergence s’exprime par des différences cognitives et sensorielles significatives chez des individus s’éloignant de la moyenne de la population générale.',
+            'Les troubles du neurodéveloppement en sont des exemples (comme l’autisme, les troubles de l’attention avec ou sans hyperactivité, les troubles dys, etc.). D’autres différences neurologiques peuvent également être considérées dans l’approche de la neurodiversité, telles que la trisomie 21 par exemple.',
+            'Ces différences peuvent créer des situations de handicap et des inégalités des chances face à l’éducation et à l’emploi, excluant ces personnes de la société. Vivre dans la neurodiversité, c’est accepter les différences neurocognitives et sensorielles de chacun en respectant leurs besoins spécifiques et en considérant leurs qualités et leurs talents, même s’ils ne sont pas ancrés dans la conformité.'
           ]
         }
       ]
@@ -232,22 +236,23 @@ export const associationPage: SitePage = {
 };
 
 export const collegePage: SitePage = {
-  navLabel: 'Le collège',
+  navLabel: 'Le collège-lycée',
   route: '/college',
-  title: 'Le collège',
+  title: 'Le collège-lycée',
   eyebrow: 'Le projet éducatif',
   // Titre masqué à l'écran (gardé pour les lecteurs d'écran), image pleine page, textes
   // pleine largeur justifiés, encadrés « Comment ? » repliables (retour du 19/10/2026).
   hideTitle: true,
   wideText: true,
-  // Schéma en tête de page, sur fond bleu ciel, sans la signature ni la légende du bas
-  // (retour du 26/10/2026). « Pour qui ? » suit directement.
+  // En tête de page : image « Schéma_image_collège » (salle de classe + messages), sur fond
+  // bleu ciel (retour du 06/11/2026). « Pour qui ? » suit directement.
   banner: {
-    src: '/images/schema-college-sans-signature.webp',
-    srcSmall: '/images/schema-college-sans-signature-800.webp',
-    width: 1254,
-    height: 1075,
-    alt: 'Schéma du modèle du collège. Au centre : le jeune, au cœur de notre projet. Autour de lui, trois partenaires : les parents, des partenaires au quotidien ; les enseignants, une pédagogie bienveillante ; les intervenants, des expertises complémentaires. Sur le cercle extérieur, six actions : écouter pour comprendre, comprendre pour mieux agir, adapter aux besoins de chacun, accompagner chaque jeune dans son projet, partager dans l’intelligence collective, construire ensemble un avenir serein.'
+    src: '/images/schema-image-college.webp',
+    srcSmall: '/images/schema-image-college-900.webp',
+    smallWidth: 900,
+    width: 1376,
+    height: 768,
+    alt: 'Salle de classe lumineuse avec livres, globe, ordinateur, microscope et matériel créatif. Messages : « Un collège-lycée pour tous les profils ! », « Pour révéler les talents singuliers de chacun ! », « Un apprentissage adapté à chaque projet ! », « Quel que soit votre domaine de prédilection ou la filière choisie ! », « On s’adapte au mode de fonctionnement de chacun ».'
   },
   // Source : brief « Contenu site Internet », page collège.
   blocks: [
@@ -366,6 +371,8 @@ export const collegePage: SitePage = {
     {
       id: 'organisation-participative',
       title: 'Organisation participative',
+      // Encadré ombré (retour du 05/11/2026).
+      variant: 'shadow',
       body: [
         'Notre collège se veut participatif avec l’implication des familles pour accompagner les jeunes 1 jour par semaine, avec un fonctionnement sous forme de roulement.',
         'L’ensemble des parents-accompagnants sont formés à la pédagogie et aux approches d’accompagnement par l’enseignant directeur et l’éducatrice spécialisée référente.',
@@ -381,6 +388,9 @@ export const soutenirPage: SitePage = {
   route: '/soutenir',
   title: 'Agir et nous soutenir',
   eyebrow: 'Construisons ensemble',
+  // Textes justifiés, bouton « Nous contacter » en fin de page (retour du 05/11/2026).
+  wideText: true,
+  endCta: { href: '/contact', label: 'Nous contacter' },
   intro: 'Le projet a besoin de locaux, de financements et de compétences. Chaque contribution compte.',
   blocks: [
     {
@@ -394,20 +404,45 @@ export const soutenirPage: SitePage = {
       title: 'Dons en nature',
       body: ['Mise à disposition de locaux, mobilier, matériel informatique, équipement de fablab : les dons en nature sont précieux.']
     },
-    { id: 'taxe-apprentissage', title: 'Taxe d’apprentissage', todo: 'Préciser si l’association est habilitée à percevoir la taxe d’apprentissage et comment la flécher.' },
+    {
+      id: 'taxe-apprentissage',
+      title: 'Taxe d’apprentissage',
+      body: ['Soutenez nos actions en versant votre taxe d’apprentissage à notre association. Votre contribution participe directement au développement du Collège de la Neurodiversité et à l’accompagnement de ses bénéficiaires. En choisissant notre association, vous participez au financement de projets à fort impact social et éducatif.']
+    },
     {
       id: 'benevolat-competences',
       title: 'Bénévolat et mécénat de compétences',
-      body: ['Nous recherchons des partenaires pour : la mise à disposition des locaux ; un soutien financier ; l’accompagnement des travaux et des normes ERP ; un partenariat territorial durable.']
+      body: [
+        '**Devenez bénévole et partagez vos talents pour participer concrètement à des actions qui font la différence !**',
+        'Le Collège de la Neurodiversité fait appel à de nombreuses compétences humaines et techniques. Que ce soit pour le fonctionnement du collège au quotidien, dans l’accompagnement des jeunes, ou en fonction de chaque projet individuel métier ou projet collectif utile, nous avons besoin de vous pour donner la chance à chacun de sortir d’une impasse et de réaliser ses rêves !'
+      ]
     },
-    { id: 'contact', title: 'Échangeons', custom: 'contact' }
   ]
+};
+
+// Page Contact (retour du 05/11/2026) : formulaire « Échangeons » qui ouvre la messagerie
+// du visiteur (mailto), sans serveur.
+export const contact = {
+  subject: 'Contact depuis le site',
+  intro: 'Une question, une pré-inscription, une envie de nous soutenir ? Écrivez-nous : votre messagerie s’ouvrira avec un e-mail prêt à envoyer.',
+  submitLabel: 'Envoyer le message',
+  note: 'Vous pouvez aussi nous écrire directement à'
+};
+
+export const contactPage: SitePage = {
+  navLabel: 'Contact',
+  route: '/contact',
+  title: 'Nous contacter',
+  eyebrow: 'Contact',
+  wideText: true,
+  blocks: [{ id: 'echangeons', title: 'Échangeons', custom: 'contact' }]
 };
 
 export const sitePages: SitePage[] = [
   associationPage,
   collegePage,
-  soutenirPage
+  soutenirPage,
+  contactPage
 ];
 
 export const lieuSite = {
@@ -484,10 +519,7 @@ export const soutenir = {
     'un partenariat territorial durable.'
   ],
   pdfButtonLabel: 'Télécharger le dossier de présentation',
-  pdfButtonNote: '(PDF, lien à configurer)',
-  formTitle: 'Échangeons',
-  formIntro: 'Le formulaire est prêt à relier à Formspree.',
-  formSubmitLabel: 'Envoyer le message'
+  pdfButtonNote: '(PDF, lien à configurer)'
 };
 
 export const footer = {

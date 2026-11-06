@@ -56,8 +56,18 @@ const { quotes, image } = Astro.props;
     align-items: center;
     padding-block: clamp(2.5rem, 6vh, 4.5rem);
   }
-  @media (min-width: 52rem) { .quotes-inner { grid-template-columns: minmax(0, 1fr) 15rem; gap: 3rem; } }
-  .quotes-slides { display: grid; min-height: 12rem; }
+  /* Dessin centré verticalement sur le texte de la citation (retour du 05/11/2026) : la boîte
+     s'efface de la grille (display: contents) pour que citation, dessin et flèches aient
+     chacun leur case ; les flèches passent sous la citation. */
+  .quotes-box { display: contents; }
+  .quotes-slides { grid-area: text; }
+  .quotes-controls { grid-area: controls; }
+  .quotes-art { grid-area: art; align-self: center; }
+  .quotes-inner { grid-template-areas: "art" "text" "controls"; row-gap: 1.25rem; }
+  @media (min-width: 52rem) {
+    .quotes-inner { grid-template-columns: minmax(0, 1fr) 13rem; grid-template-areas: "text art" "controls ."; column-gap: 3rem; row-gap: 0; }
+  }
+  .quotes-slides { display: grid; }
   /* Toutes les citations dans la même cellule : la hauteur de l'encart suit la plus longue,
      rien ne saute au changement de citation. */
   .quotes-slide { grid-area: 1 / 1; margin: 0; display: flex; flex-direction: column; justify-content: center; }
@@ -79,7 +89,7 @@ const { quotes, image } = Astro.props;
   }
   @keyframes quotes-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-  .quotes-controls { display: flex; align-items: center; gap: 0.6rem; margin-top: 1.5rem; }
+  .quotes-controls { display: flex; align-items: center; gap: 0.6rem; margin-top: 1.25rem; }
   .quotes-btn {
     display: inline-flex; align-items: center; justify-content: center;
     width: 44px; height: 44px; padding: 0;
@@ -91,8 +101,8 @@ const { quotes, image } = Astro.props;
   .quotes-dot { width: 10px; height: 10px; border-radius: 999px; background: var(--color-blue-soft); }
   .quotes-dot.is-active { background: var(--color-blue-deep); }
 
-  .quotes-art { display: block; width: min(100%, 15rem); height: auto; margin-inline: auto; }
-  @media (max-width: 51.99rem) { .quotes-art { width: 9rem; order: -1; } }
+  .quotes-art { display: block; width: min(100%, 13rem); height: auto; margin-inline: auto; }
+  @media (max-width: 51.99rem) { .quotes-art { width: 9rem; } }
 </style>
 
 <script>

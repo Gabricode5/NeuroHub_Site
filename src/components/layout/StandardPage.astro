@@ -12,6 +12,7 @@ import ImpactTable from '../blocks/ImpactTable.astro';
 import MapEmbed from '../blocks/MapEmbed.astro';
 import ContactForm from '../blocks/ContactForm.astro';
 import QuoteCarousel from '../blocks/QuoteCarousel.astro';
+import Button from '../ui/Button.astro';
 import { rich } from '../../lib/rich';
 import { accent } from '../../lib/accents';
 import type { SitePage } from '../../data/content';
@@ -38,8 +39,8 @@ const splitTerm = (item: string) => {
     <div class="wrap">
       <img
         src={page.banner.src}
-        srcset={page.banner.srcSmall ? `${page.banner.srcSmall} 800w, ${page.banner.src} ${page.banner.width}w` : undefined}
-        sizes="min(100vw, 46rem)"
+        srcset={page.banner.srcSmall ? `${page.banner.srcSmall} ${page.banner.smallWidth ?? 800}w, ${page.banner.src} ${page.banner.width}w` : undefined}
+        sizes="min(100vw, 72rem)"
         width={page.banner.width}
         height={page.banner.height}
         alt={page.banner.alt}
@@ -71,7 +72,7 @@ const splitTerm = (item: string) => {
     )}
 
     {(block.figure || block.body) && (
-      <div class:list={[block.figure && (page.wideText ? 'std-figure-full' : 'std-with-figure'), block.variant === 'callout' && 'std-callout']}>
+      <div class:list={[block.figure && (page.wideText ? 'std-figure-full' : 'std-with-figure'), (block.variant === 'callout' || block.variant === 'shadow') && 'std-callout', block.variant === 'shadow' && 'std-shadow']}>
         {block.figure && (
           <img
             src={block.figure.src}
@@ -88,7 +89,7 @@ const splitTerm = (item: string) => {
         {block.body && (
           <div class:list={['std-text measure', block.quote && 'std-justify']}>
             {block.body.map((paragraph, j) => (
-              <p class:list={[j === 0 && !block.figure && block.variant !== 'callout' && !page.wideText && 'std-lead']} set:html={rich(paragraph)} />
+              <p class:list={[j === 0 && !block.figure && !block.variant && !page.wideText && 'std-lead']} set:html={rich(paragraph)} />
             ))}
           </div>
         )}
@@ -103,7 +104,7 @@ const splitTerm = (item: string) => {
           return (
             <li
               class:list={[term && 'std-card-filled']}
-              style={term ? `--accent:${accent(j).bar};background:${accent(j).fill};color:${accent(j).onFill}` : `--accent:${accent(j).bar}`}
+              style={term ? `--accent:${accent(j).bar};background:${accent(j).pastel}` : `--accent:${accent(j).bar}`}
             >
               {term && <p class="std-card-term">{term}</p>}
               <p class="m-0" style={`--accent-text:${accent(j).text}`} set:html={rich(text)} />
@@ -153,7 +154,7 @@ const splitTerm = (item: string) => {
                 {sub.list && (sub.listStyle === 'cards' ? (
                   <ol class="std-card-list">
                     {sub.list.map((item, k) => (
-                      <li class="std-card-filled" style={`--accent:${accent(k).bar};background:${accent(k).fill};color:${accent(k).onFill}`}>
+                      <li class="std-card-filled" style={`--accent:${accent(k).bar};background:${accent(k).pastel}`}>
                         <p class="m-0" set:html={rich(item)} />
                       </li>
                     ))}
@@ -179,7 +180,7 @@ const splitTerm = (item: string) => {
               {sub.list && (sub.listStyle === 'cards' ? (
                 <ol class="std-card-list">
                   {sub.list.map((item, k) => (
-                    <li class="std-card-filled" style={`--accent:${accent(k).bar};background:${accent(k).fill};color:${accent(k).onFill}`}>
+                    <li class="std-card-filled" style={`--accent:${accent(k).bar};background:${accent(k).pastel}`}>
                       <p class="m-0" set:html={rich(item)} />
                     </li>
                   ))}
@@ -209,6 +210,11 @@ const splitTerm = (item: string) => {
     )}
   </Section>
 ))}
+{page.endCta && (
+  <div class="wrap std-end-cta">
+    <Button href={page.endCta.href} variant="orange" class="!min-h-[56px] !px-8 !py-3.5 !text-[1.35rem]">{page.endCta.label}</Button>
+  </div>
+)}
 </div>
 
 <style is:global>
@@ -265,20 +271,26 @@ const splitTerm = (item: string) => {
      intro des groupes alignés sur la largeur des cartes, tous justifiés. */
   .std-wide .measure, .std-wide .std-quote, .std-wide .std-callout, .std-wide .std-note { max-width: none; }
   /* Pas de coupure de mots (« neurodiversité » ne doit jamais être séparé, retour du 26/10/2026). */
-  .std-wide .std-text p, .std-wide .measure, .std-wide .std-quote blockquote, .std-wide .std-card-list p { text-align: justify; hyphens: manual; -webkit-hyphens: manual; }
-  /* Vignettes pleine couleur (principes) : texte aligné à gauche, plus lisible en colonne étroite. */
+  .std-wide .std-text p, .std-wide .measure, .std-wide .std-quote blockquote { text-align: justify; hyphens: manual; -webkit-hyphens: manual; }
+  /* Cartes et vignettes : jamais justifiées (colonnes trop étroites, retour du 06/11/2026). */
+  .std-wide .std-sub-card .std-text p { text-align: left; }
   /* Petits écrans : texte aligné à gauche (sans coupure de mots, la justification y creuse de
      grands blancs entre les mots). */
   @media (max-width: 40rem) {
-    .std-wide .std-text p, .std-wide .measure, .std-wide .std-quote blockquote, .std-wide .std-card-list p { text-align: left; }
+    .std-wide .std-text p, .std-wide .measure, .std-wide .std-quote blockquote { text-align: left; }
   }
   .std-card-filled { border-color: transparent !important; }
+  /* Encadré ombré (Organisation participative). */
+  .std-shadow { border-left-color: #7C3AED; box-shadow: 0 18px 40px -18px rgba(39, 115, 178, 0.55), 0 4px 12px -6px rgba(0, 0, 0, 0.12); }
+  .std-end-cta { display: flex; justify-content: center; padding-block: 1rem clamp(3.5rem, 8vh, 6rem); }
+  /* Définition aérée : plus de marge intérieure, interlignage et espace entre paragraphes. */
+  .std-note .std-text p { font-size: 1.15rem; line-height: 1.95; margin-bottom: 1.4rem; }
   .std-card-filled strong { color: inherit; }
 
   /* Encart image en tête de page (collège) : fond bleu ciel, image posée sur une carte blanche. */
   .std-banner { background: #E0F4FF; border-bottom: 1px solid var(--color-blue-soft); padding-block: clamp(2rem, 5vh, 3.5rem); }
-  .std-banner img { display: block; width: min(100%, 46rem); height: auto; margin-inline: auto; padding: clamp(0.75rem, 2vw, 1.5rem); background: #fff; border-radius: var(--radius-md, 8px); box-shadow: 0 14px 30px -18px rgba(39, 115, 178, 0.6); }
-  .std-wide .std-card-filled p { text-align: left; }
+  /* Image encadrée de blanc, un peu plus grande qu'avant (retour du 06/11/2026). */
+  .std-banner img { display: block; width: min(100%, 72rem); height: auto; margin-inline: auto; padding: clamp(0.75rem, 2vw, 1.5rem); background: #fff; border-radius: var(--radius-md, 8px); box-shadow: 0 14px 30px -18px rgba(39, 115, 178, 0.6); }
   .std-quote figcaption { margin-top: 1rem; font-weight: 700; color: var(--color-blue-deep); }
 
   .std-with-figure { display: grid; gap: 2rem; align-items: start; }
@@ -323,7 +335,7 @@ const splitTerm = (item: string) => {
   .std-sub-stack .std-card-list { margin-top: 0.5rem; }
 
   .std-note {
-    padding: 1.6rem 1.75rem;
+    padding: clamp(1.75rem, 3vw, 2.75rem) clamp(1.5rem, 3.5vw, 3.25rem);
     background: var(--color-blue-pale);
     border-left: 6px solid var(--color-blue-deep);
     border-radius: var(--radius-md, 8px);

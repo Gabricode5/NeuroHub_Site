@@ -80,8 +80,9 @@ import { accent } from '../../lib/accents';
   .support-ways { display: grid; gap: 1.25rem; margin-top: 2.5rem; }
   @media (min-width: 48rem) { .support-ways { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .support-way {
-    /* Fond vert (retour du 26/10/2026), bande arc-en-ciel conservée ; texte blanc 5.1:1. */
-    padding: 1.75rem 1.85rem; background: #2E7D32; color: #fff;
+    /* Fond vert clair (retours des 26/10 et 05/11/2026), bande arc-en-ciel conservée ;
+       texte encre (≥ 11:1). */
+    padding: 1.75rem 1.85rem; background: #D4EDC4; color: var(--color-ink);
     border-top: 6px solid transparent;
     border-image: linear-gradient(90deg, #00B6FF, #7C3AED, #FF005D, #FF8A3D, #8DC63F) 1;
     box-shadow: 0 14px 30px -16px rgba(0, 0, 0, 0.6);
@@ -91,7 +92,7 @@ import { accent } from '../../lib/accents';
     display: inline-flex; align-items: center; justify-content: center;
     width: 3rem; height: 3rem; border-radius: 999px; background: #fff; font-size: 1.5rem;
   }
-  .support-way-title { margin: 0.9rem 0 0.5rem; font-family: var(--font-serif); font-size: 1.75rem; font-weight: 700; color: #fff; }
+  .support-way-title { margin: 0.9rem 0 0.5rem; font-family: var(--font-serif); font-size: 1.75rem; font-weight: 700; color: #000; }
 
   :global(body.high-contrast) .support-veil { background: #000; }
 </style>

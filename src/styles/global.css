@@ -142,6 +142,18 @@ body.motion-off *, body.motion-off *::before, body.motion-off *::after { transit
 }
 
 
+/* Textes justifiés sur tout le site (retour du 05/11/2026), sans coupure de mots ; alignés à
+   gauche sur petit écran, où la justification sans coupure creuse de grands blancs. Les textes
+   centrés (équipe, invitation à défiler) gardent leur alignement. */
+@media (min-width: 40.01rem) {
+  main p, main li, main blockquote { text-align: justify; hyphens: manual; }
+  main .team-member, main .team-member * { text-align: center; }
+  /* Titres (sections, cartes, vignettes) : jamais justifiés. */
+  main h1, main h2, main h3, main h4, main .std-card-term { text-align: left; }
+  /* Cartes / vignettes (accueil, association, collège) : texte aligné à gauche, jamais justifié. */
+  main :is(.std-card-list, .home-pillars, .support-reasons, .support-way, .home-hero-card, .std-sub-card) :is(p, li, span) { text-align: left; }
+}
+
 /* Grille de cartes numérotées à filet coloré (--accent posé en style inline). */
 .std-list-intro { margin: 2.5rem 0 1.25rem; font-size: 1.2rem; font-weight: 700; }
 .std-card-list {

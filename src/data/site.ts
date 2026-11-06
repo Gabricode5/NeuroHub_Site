@@ -25,7 +25,7 @@ export const site = {
   // '/dossier-presentation.pdf' ici. Tant que la valeur vaut '#', le bouton est masqué.
   presentationPdfHref: '#',
   // Lien HelloAsso du bouton « Adhésion à l'association » (page association), à renseigner.
-  // Tant qu'il est vide, le bouton mène au formulaire de contact.
+  // Tant qu'il est vide, le bouton mène à la page Contact.
   adhesionUrl: '',
 
   mapEmbedSrc: 'https://www.openstreetmap.org/export/embed.html?bbox=2.408%2C48.671%2C2.435%2C48.685&layer=mapnik',
@@ -33,7 +33,9 @@ export const site = {
   nav: [
     { href: '/', label: 'Accueil' },
     { href: '/association', label: 'L’association' },
-    { href: '/college', label: 'Le collège' }
+    { href: '/college', label: 'Le collège-lycée' }
   ] satisfies NavLink[],
-  navCta: { href: '/soutenir', label: 'Nous soutenir' }
+  navCta: { href: '/soutenir', label: 'Nous soutenir' },
+  // Bouton orange de l'en-tête vers la page Contact (retour du 05/11/2026).
+  navContact: { href: '/contact', label: 'Nous contacter' }
 };

@@ -82,10 +82,9 @@ export const porteurs = {
   benefactors: [
     { name: 'Inès Ramdani', role: 'Soutien et participation à la co-construction du projet du collège, créatrice du logo de l’association',
       initials: 'IR', photo: '/images/membres/ines-ramdani.webp' },
-    { name: 'Lionel Monbrison', role: 'Soutien et participation à la co-construction du projet du collège, référent pédagogique', initials: 'LM' },
+    { name: 'Lionel Monbrison', role: 'Soutien et participation à la co-construction du projet du collège, référent pédagogique', initials: 'LM', photo: '/images/membres/lionel-monbrison.webp' },
     { name: 'Gaby', role: 'Créateur du site Internet', initials: 'G', photo: '/images/membres/gabriel-guery.webp' }
-  ] as TeamMember[],
-  note: 'Photo à venir pour Lionel Monbrison.'
+  ] as TeamMember[]
 };
 
 // ————————————————————————————————————————————————————————————————
@@ -101,8 +100,8 @@ export interface PageBlock {
   body?: string[];
   /** Liens d’action affichés sous le texte. */
   links?: { href: string; label: string }[];
-  /** Module riche à insérer : 'team' | 'pillars' | 'budget' | 'impact' | 'map' | 'contact'. */
-  custom?: 'team' | 'pillars' | 'budget' | 'impact' | 'map' | 'contact';
+  /** Module riche à insérer : équipe ou formulaire de contact. */
+  custom?: 'team' | 'contact';
   /** Note personnalisée pour l’encadré « à compléter ». */
   todo?: string;
   /** Mention de sources, affichée en petit sous le contenu du bloc. */
@@ -382,7 +381,6 @@ export const collegePage: SitePage = {
   ]
 };
 
-
 export const soutenirPage: SitePage = {
   navLabel: 'Nous soutenir',
   route: '/soutenir',
@@ -438,53 +436,6 @@ export const contactPage: SitePage = {
   blocks: [{ id: 'echangeons', title: 'Échangeons', custom: 'contact' }]
 };
 
-export const sitePages: SitePage[] = [
-  associationPage,
-  collegePage,
-  soutenirPage,
-  contactPage
-];
-
-export const lieuSite = {
-  eyebrow: 'Implantation',
-  title: 'Un site à reconnecter à son territoire',
-  paragraphs: [
-    'La Base régionale de loisirs du Port aux Cerises est au croisement de trois communes densément peuplées, dans un environnement calme et connecté à la nature.',
-    'Des locaux inoccupés depuis plusieurs années pourraient être rénovés et mis aux normes ERP pour accueillir salles de classe, espaces de vie et de détente, bibliothèque, fablab et espace forme.'
-  ],
-  mapTitle: 'Carte de la Base de loisirs du Port aux Cerises'
-};
-
-export const modele = {
-  eyebrow: 'Transparence',
-  title: 'Un modèle économique lisible',
-  budgetCaption: 'Prévision pour 15 élèves',
-  budgetRows: [
-    { label: 'Budget annuel prévisionnel', prefix: '~', count: 345, suffix: ' k€' },
-    { label: 'Participation des familles', prefix: '', count: 75, suffix: ' k€', highlight: true },
-    { label: 'Financement public/privé à mobiliser', prefix: '~', count: 270, suffix: ' k€' }
-  ],
-  orgBlock: {
-    title: 'Organisation prévisionnelle',
-    paragraphs: [
-      '5 ETP, un mi-temps, un expert-comptable et un bénévolat complémentaire.',
-      'École hors contrat : l’objectif est un autofinancement progressif à terme, avec une participation des familles plafonnée à 5 000 € par an et par élève.'
-    ]
-  }
-};
-
-export const impact = {
-  eyebrow: 'Pour Draveil',
-  title: 'Un projet utile à tout le territoire',
-  captionSr: 'Bénéfices, impacts attendus et indicateurs proposés',
-  columns: ['Bénéfices', 'Impacts attendus', 'Indicateurs proposés'],
-  rows: [
-    { benefit: 'Territoire démonstrateur', impactText: 'Une réponse inclusive reconnue', indicator: 'Partenariats territoriaux engagés' },
-    { benefit: 'Passerelles locales', impactText: 'Éducation, santé, handicap, emploi et entreprises reliés', indicator: 'Actions et acteurs mobilisés', highlight: true },
-    { benefit: 'Patrimoine et attractivité', impactText: 'Locaux revalorisés, familles et jeunesse accompagnées', indicator: 'Locaux remis en usage, projets menés' }
-  ]
-};
-
 // Nouvelle section homepage (source : fiche projet officielle, page 2).
 export const pourquoiSoutenir = {
   eyebrow: 'Pour soutenir le projet',
@@ -506,20 +457,6 @@ export const pourquoiSoutenir = {
     text: 'Proposer son expertise et savoir-faire utiles aux jeunes et à l’équipe.'
   },
   more: { href: '/soutenir', label: 'Agir et nous soutenir' }
-};
-
-export const soutenir = {
-  eyebrow: 'Construisons ensemble',
-  title: 'Nous soutenir',
-  needsIntro: 'Nous recherchons des partenaires pour :',
-  needs: [
-    'la mise à disposition des locaux ;',
-    'un soutien financier ;',
-    'l’accompagnement des travaux et normes ERP ;',
-    'un partenariat territorial durable.'
-  ],
-  pdfButtonLabel: 'Télécharger le dossier de présentation',
-  pdfButtonNote: '(PDF, lien à configurer)'
 };
 
 export const footer = {

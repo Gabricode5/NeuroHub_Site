@@ -62,24 +62,6 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-serif); }
 .card { border:1px solid var(--color-blue-soft); border-radius:var(--radius-md); background:var(--color-blue-pale); color:var(--color-ink); transition: border-color .2s ease; }
 .card:hover { border-color:var(--color-blue); }
 
-/* Ligne mise en avant dans un tableau (bloc sombre ou clair) : fond blanc qui tranche sur les
-   deux fonds de section (bleu profond ou bleu très clair), jamais de fond clair avec texte clair */
-.row-highlight { background:#fff; color:var(--color-ink); }
-
-/* Montant-clé de tableau (ex. 345K/75K/270K du budget) : bleu comme sur le flyer. La ligne
-   "normale" est transparente et laisse voir le fond de la section — qui peut être claire ou
-   sombre selon la page (voir StandardPage.astro, alternance ancrée sur le dernier bloc) : la
-   teinte du montant suit donc le fond réel via le sélecteur ancêtre .bg-blue-deep, plutôt que de
-   supposer un fond sombre par défaut (bug vu le 12/09 : montants invisibles, bleu très clair sur
-   fond clair, après un changement d'alternance qui a fait atterrir un tableau sur une section
-   claire). Sur une ligne mise en avant (fond blanc, voir .row-highlight ci-dessus) ou "mist"
-   (fond blanc, voir DataTable), le bleu profond reste lisible sur blanc quel que soit le fond
-   de la section — ces deux règles doivent rester après .bg-blue-deep .amount-kpi ci-dessous
-   pour gagner en cas d'égalité de spécificité. */
-.amount-kpi { font-size:1.25rem; font-weight:700; color:var(--color-blue-deep); }
-.bg-blue-deep .amount-kpi { color:var(--color-blue-pale); }
-.row-highlight .amount-kpi, .bg-white .amount-kpi { color:var(--color-blue-deep); }
-
 /* Sections « à la hauteur de leur contenu » : pas de hauteur forcée (min-height:100dvh +
    centrage vertical produisait de grands vides blancs sur le contenu court, citation,
    stats...). Le padding généreux et homogène + l'alternance de fond font l'effet « blocs ». */

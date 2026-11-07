@@ -6,10 +6,6 @@ import PageHeader from './PageHeader.astro';
 import Section from './Section.astro';
 import Todo from '../ui/Todo.astro';
 import TeamGrid from './TeamGrid.astro';
-import PillarGrid from '../blocks/PillarGrid.astro';
-import BudgetTable from '../blocks/BudgetTable.astro';
-import ImpactTable from '../blocks/ImpactTable.astro';
-import MapEmbed from '../blocks/MapEmbed.astro';
 import ContactForm from '../blocks/ContactForm.astro';
 import QuoteCarousel from '../blocks/QuoteCarousel.astro';
 import Button from '../ui/Button.astro';
@@ -119,10 +115,6 @@ const splitTerm = (item: string) => {
     ))}
 
     {block.custom === 'team' && <TeamGrid />}
-    {block.custom === 'pillars' && <PillarGrid />}
-    {block.custom === 'budget' && <BudgetTable />}
-    {block.custom === 'impact' && <ImpactTable />}
-    {block.custom === 'map' && <MapEmbed />}
     {block.custom === 'contact' && <ContactForm />}
 
     {block.subsections && (

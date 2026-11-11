@@ -75,7 +75,7 @@ export const porteurs = {
       initials: 'FB', photo: '/images/membres/frederic-bonniot.webp' },
     { name: 'Maëlys Garcia', role: 'Trésorière',
       initials: 'MG', photo: '/images/membres/maelys-garcia.webp' },
-    { name: 'Louis Glandières', role: 'Membre du conseil d’administration',
+    { name: 'Louis Glandières', role: 'Administrateur',
       initials: 'LG', photo: '/images/membres/louis-glandieres.webp' }
   ] as TeamMember[],
   benefactorsIntro: 'Notre association a la chance de pouvoir aussi compter sur ses membres bienfaiteurs pour concrétiser les projets :',
@@ -403,11 +403,6 @@ export const soutenirPage: SitePage = {
       body: ['Mise à disposition de locaux, mobilier, matériel informatique, équipement de fablab : les dons en nature sont précieux.']
     },
     {
-      id: 'taxe-apprentissage',
-      title: 'Taxe d’apprentissage',
-      body: ['Soutenez nos actions en versant votre taxe d’apprentissage à notre association. Votre contribution participe directement au développement du Collège de la Neurodiversité et à l’accompagnement de ses bénéficiaires. En choisissant notre association, vous participez au financement de projets à fort impact social et éducatif.']
-    },
-    {
       id: 'benevolat-competences',
       title: 'Bénévolat et mécénat de compétences',
       body: [
@@ -439,7 +434,7 @@ export const contactPage: SitePage = {
 // Nouvelle section homepage (source : fiche projet officielle, page 2).
 export const pourquoiSoutenir = {
   eyebrow: 'Pour soutenir le projet',
-  title: 'Pourquoi soutenir l’école ?',
+  title: 'Pourquoi soutenir le projet ?',
   reasons: [
     'Prévenir les ruptures de parcours et le décrochage scolaire.',
     'Réduire l’isolement et favoriser la socialisation.',
